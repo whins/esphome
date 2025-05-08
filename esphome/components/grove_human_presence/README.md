@@ -1,9 +1,12 @@
+
+# Grove Human Presence Sensor
+
 ```yaml
 # example configuration:
 
 sensor:
-  - platform: empty_i2c_sensor
-    name: Empty I2C sensor
+  - platform: grove_human_presence
+    name: Grove Human Presence Sensor
 
 i2c:
   sda: 4
