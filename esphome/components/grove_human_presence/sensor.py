@@ -3,17 +3,27 @@ import esphome.config_validation as cv
 from esphome.components import i2c, sensor
 from esphome.const import CONF_ID, ICON_EMPTY, UNIT_EMPTY
 
-DEPENDENCIES = ['i2c']
+DEPENDENCIES = ["i2c"]
 
 CONF_I2C_ADDR = 0x64
-CONF_POLLING_INTERVAL = '5s'
+CONF_POLLING_INTERVAL = "5s"
 
-grove_human_presence_ns = cg.esphome_ns.namespace('grove_human_presence')
-GroveHumanPresenceSensor = grove_human_presence_ns.class_('GroveHumanPresenceSensor', cg.PollingComponent, i2c.I2CDevice)
+grove_human_presence_ns = cg.esphome_ns.namespace("grove_human_presence")
+GroveHumanPresenceSensor = grove_human_presence_ns.class_(
+    "GroveHumanPresenceSensor", cg.PollingComponent, i2c.I2CDevice
+)
 
-CONFIG_SCHEMA = sensor.sensor_schema(UNIT_EMPTY, ICON_EMPTY, 1).extend({
-    cv.GenerateID(): cv.declare_id(GroveHumanPresenceSensor),
-}).extend(cv.polling_component_schema(CONF_POLLING_INTERVAL)).extend(i2c.i2c_device_schema(CONF_I2C_ADDR))
+CONFIG_SCHEMA = (
+    sensor.sensor_schema(UNIT_EMPTY, ICON_EMPTY, 1)
+    .extend(
+        {
+            cv.GenerateID(): cv.declare_id(GroveHumanPresenceSensor),
+        }
+    )
+    .extend(cv.polling_component_schema(CONF_POLLING_INTERVAL))
+    .extend(i2c.i2c_device_schema(CONF_I2C_ADDR))
+)
+
 
 def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
