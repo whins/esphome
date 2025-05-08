@@ -8,6 +8,9 @@ namespace esphome {
 namespace grove_human_presence {
 
 class GroveHumanPresenceSensor : public sensor::Sensor, public PollingComponent, public i2c::I2CDevice {
+ protected:
+  float get_sensor_value();
+
  public:
   void setup() override;
   void update() override;
