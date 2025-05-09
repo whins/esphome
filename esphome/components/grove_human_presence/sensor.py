@@ -1,7 +1,7 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import i2c, sensor
-from esphome.const import CONF_ID, ICON_EMPTY, UNIT_EMPTY
+from esphome.const import CONF_ID
 
 DEPENDENCIES = ["i2c"]
 
@@ -14,7 +14,7 @@ GroveHumanPresenceSensor = grove_human_presence_ns.class_(
 )
 
 CONFIG_SCHEMA = (
-    sensor.sensor_schema(UNIT_EMPTY, ICON_EMPTY, 1)
+    sensor.sensor_schema()
     .extend(
         {
             cv.GenerateID(): cv.declare_id(GroveHumanPresenceSensor),
