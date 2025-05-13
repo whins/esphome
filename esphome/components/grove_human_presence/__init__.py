@@ -2,21 +2,13 @@ import esphome.codegen as cg
 from esphome.components import i2c, sensor
 import esphome.config_validation as cv
 from esphome.const import (
-    CONF_FORCE_UPDATE,
-    CONF_ICON,
     CONF_ID,
-    CONF_NAME,
-    CONF_SENSORS,
 )
-
-
-AUTO_LOAD = ["sensor"]
 
 DEPENDENCIES = ["i2c"]
 
 CONF_I2C_ADDR = 0x64
 CONF_POLLING_INTERVAL = "5s"
-
 
 grove_human_presence_ns = cg.esphome_ns.namespace("grove_human_presence")
 GroveHumanPresenceSensor = grove_human_presence_ns.class_(
