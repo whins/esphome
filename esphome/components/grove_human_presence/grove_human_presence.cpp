@@ -101,7 +101,7 @@ void GroveHumanPresenceSensor::update() {
   ESP_LOGD(TAG, "Read REG_ST1 data:  %0x", data);
 
   if (!dataReady()) {
-    ESP_LOGW(TAG, "Reading Grove Gas Sensor data failed!");
+    ESP_LOGW(TAG, "Data not ready failed!");
     this->status_set_warning();
     return;
   }

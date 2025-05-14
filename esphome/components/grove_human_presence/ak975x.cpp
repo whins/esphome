@@ -321,12 +321,13 @@ int AK975X::readRegs(int addr, uint8_t *data, int len) {
   uint8_t *p = (uint8_t *) &addr;
 
   if (!this->write(p, 1)) {
-    // Помилка передавання регістра
+    ESP_LOGW(TAG, "Start registry reading failed!");
     return 1;
   }
 
   if (!this->read(data, len)) {
     // Помилка читання
+    ESP_LOGW(TAG, "Reading registry data failed!");
     return 2;
   }
 
