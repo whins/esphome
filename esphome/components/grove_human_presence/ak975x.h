@@ -121,6 +121,10 @@ class AK975X : public i2c::I2CDevice {
   void setECNTL1(uint8_t value);
   void softReset(void);
 
+ protected:
+  int readRegs(int addr, uint8_t *data, int len);
+  int writeRegs(uint8_t *data, int len);
+
  public:
   /**
       This is an alias of getST2(), just for friendly name
