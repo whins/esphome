@@ -89,7 +89,13 @@ void GroveHumanPresenceSensor::update() {
   float ir1, ir2, ir3, ir4, diff13, diff24;
   uint32_t now = millis();
 
-  if (!dataReady()) {
+  uint8_t data;
+  read_register(REG_ST1, &data, 1);
+
+  ESP_LOGD(TAG, "Read REG_ST1 data:  %d", data);
+
+  // if (!dataReady()) {
+  if ((data & 0x01) != 0x01) {
     ESP_LOGD(TAG, "data is not ready");
     return;
   }
