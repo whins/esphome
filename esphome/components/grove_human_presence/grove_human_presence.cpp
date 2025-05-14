@@ -18,7 +18,7 @@ void GroveHumanPresenceSensor::setup() {
   memset(m_presences, 0, sizeof(m_presences));
   m_movement = MOVEMENT_NONE;
 
-  if(this->initialize()){
+  if (this->initialize()) {
     ESP_LOGI(TAG, "Grove Human Presence Sensor initialized successfully.");
   } else {
     ESP_LOGE(TAG, "Failed to initialize Grove Human Presence Sensor.");
@@ -100,19 +100,21 @@ void GroveHumanPresenceSensor::update() {
 
   ESP_LOGD(TAG, "Read REG_ST1 data:  %0x", data);
 
-  // if (!dataReady()) {
-  if ((data & 0x01) != 0x01) {
+  if (!dataReady()) {
+    // if ((data & 0x01) != 0x01) {
     ESP_LOGW(TAG, "Reading Grove Gas Sensor data failed!");
     this->status_set_warning();
     return;
   }
 
-  ESP_LOGI(TAG, "Read data");
+  ESP_LOGI(TAG, "Read IR data");
 
   ir1 = getIR1();
   ir2 = getIR2();
   ir3 = getIR3();
   ir4 = getIR4();
+
+  ESP_LOGI(TAG, "Read ID completed");
 
   diff13 = ir1 - ir3;
   diff24 = ir2 - ir4;
