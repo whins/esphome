@@ -5,7 +5,6 @@ namespace esphome {
 namespace grove_human_presence {
 
 bool AK975X::initialize(void) {
-  // wait 3ms
   delay(3);
 
   softReset();

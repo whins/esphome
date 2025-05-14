@@ -498,6 +498,7 @@ bool PresenceDetector::presentField4() {
   m_presences[3] = false;
   return r;
 }
+
 bool PresenceDetector::presentFullField(bool clear) {
   if (clear) {
     return presentField1() || presentField2() || presentField3() || presentField4();
