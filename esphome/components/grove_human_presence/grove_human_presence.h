@@ -37,7 +37,7 @@ class GroveHumanPresenceSensor : public sensor::Sensor, public PollingComponent,
   void setup() override;
   void update() override;
   void dump_config() override;
-  void loop() override;
+  // void loop() override;
 };
 
 }  // namespace grove_human_presence

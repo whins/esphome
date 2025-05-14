@@ -21,7 +21,73 @@ void GroveHumanPresenceSensor::setup() {
   m_movement = MOVEMENT_NONE;
 }
 
-void GroveHumanPresenceSensor::loop() {
+// void GroveHumanPresenceSensor::loop() {
+//   float ir1, ir2, ir3, ir4, diff13, diff24;
+//   uint32_t now = millis();
+
+//   if (!dataReady()) {
+//     return;
+//   }
+
+//   ir1 = getIR1();
+//   ir2 = getIR2();
+//   ir3 = getIR3();
+//   ir4 = getIR4();
+
+//   diff13 = ir1 - ir3;
+//   diff24 = ir2 - ir4;
+
+//   startNextSample();
+
+//   m_smoothers[0]->addDataPoint(ir1);
+//   m_smoothers[1]->addDataPoint(ir2);
+//   m_smoothers[2]->addDataPoint(ir3);
+//   m_smoothers[3]->addDataPoint(ir4);
+//   m_smoothers[4]->addDataPoint(diff13);
+//   m_smoothers[5]->addDataPoint(diff24);
+
+//   if (now - m_last_time > (uint32_t) detect_interval) {
+//     float d;
+//     for (int i = 0; i < 4; i++) {
+//       d = m_ders[i] = m_smoothers[i]->getDerivative();
+//       // if (i == 0) Serial.println(d);
+//       if (d > sensitivity_presence) {
+//         m_presences[i] = true;
+//       } else if (d < (-sensitivity_presence)) {
+//         m_presences[i] = false;
+//       }
+//     }
+
+//     d = m_der13 = m_smoothers[4]->getDerivative();
+//     // Serial.println(d);
+//     if (d > sensitivity_movement) {
+//       m_movement &= 0b11111100;
+//       m_movement |= MOVEMENT_FROM_3_TO_1;
+//     } else if (d < (-sensitivity_movement)) {
+//       m_movement &= 0b11111100;
+//       m_movement |= MOVEMENT_FROM_1_TO_3;
+//     }
+
+//     d = m_der24 = m_smoothers[5]->getDerivative();
+//     if (d > sensitivity_movement) {
+//       m_movement &= 0b11110011;
+//       m_movement |= MOVEMENT_FROM_4_TO_2;
+//     } else if (d < (-sensitivity_movement)) {
+//       m_movement &= 0b11110011;
+//       m_movement |= MOVEMENT_FROM_2_TO_4;
+//     }
+
+//     m_last_time = now;
+//   }
+// }
+
+uint8_t GroveHumanPresenceSensor::getMovement() {
+  uint8_t r = m_movement;
+  m_movement = MOVEMENT_NONE;
+  return r;
+}
+
+void GroveHumanPresenceSensor::update() {
   float ir1, ir2, ir3, ir4, diff13, diff24;
   uint32_t now = millis();
 
@@ -79,15 +145,7 @@ void GroveHumanPresenceSensor::loop() {
 
     m_last_time = now;
   }
-}
 
-uint8_t GroveHumanPresenceSensor::getMovement() {
-  uint8_t r = m_movement;
-  m_movement = MOVEMENT_NONE;
-  return r;
-}
-
-void GroveHumanPresenceSensor::update() {
   bool value = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];
 
   ESP_LOGI(TAG, "Human present: %s", value);
