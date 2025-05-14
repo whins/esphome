@@ -82,7 +82,6 @@ namespace grove_human_presence {
 
 class AK975X : public i2c::I2CDevice {
  private:
-  bool initialize(void);
   uint8_t getCompanyCode(void);
   uint8_t getDeviceID(void);
 
@@ -132,6 +131,7 @@ class AK975X : public i2c::I2CDevice {
   float getIR3(void);
   float getIR4(void);
   void startNextSample(void);
+  bool initialize(void);
 };
 
 }  // namespace grove_human_presence

@@ -17,6 +17,12 @@ void GroveHumanPresenceSensor::setup() {
 
   memset(m_presences, 0, sizeof(m_presences));
   m_movement = MOVEMENT_NONE;
+
+  if(this->initialize()){
+    ESP_LOGI(TAG, "Grove Human Presence Sensor initialized successfully.");
+  } else {
+    ESP_LOGE(TAG, "Failed to initialize Grove Human Presence Sensor.");
+  }
 }
 
 // void GroveHumanPresenceSensor::loop() {
