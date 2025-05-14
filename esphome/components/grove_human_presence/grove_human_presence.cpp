@@ -12,11 +12,9 @@ void GroveHumanPresenceSensor::setup() {
     m_smoothers[i] = new Smoother(0.05);  // 0.3 very steep, 0.1 less steep, 0.05 less steep
   }
 
-  detect_interval = 30;
   sensitivity_presence = 6.0;
   sensitivity_movement = 10.0;
 
-  m_last_time = millis();
   memset(m_presences, 0, sizeof(m_presences));
   m_movement = MOVEMENT_NONE;
 }
@@ -92,8 +90,11 @@ void GroveHumanPresenceSensor::update() {
   uint32_t now = millis();
 
   if (!dataReady()) {
+    ESP_LOGD(TAG, "data is not ready");
     return;
   }
+
+  ESP_LOGI(TAG, "Read data");
 
   ir1 = getIR1();
   ir2 = getIR2();
@@ -112,38 +113,34 @@ void GroveHumanPresenceSensor::update() {
   m_smoothers[4]->addDataPoint(diff13);
   m_smoothers[5]->addDataPoint(diff24);
 
-  if (now - m_last_time > (uint32_t) detect_interval) {
-    float d;
-    for (int i = 0; i < 4; i++) {
-      d = m_ders[i] = m_smoothers[i]->getDerivative();
-      // if (i == 0) Serial.println(d);
-      if (d > sensitivity_presence) {
-        m_presences[i] = true;
-      } else if (d < (-sensitivity_presence)) {
-        m_presences[i] = false;
-      }
+  float d;
+  for (int i = 0; i < 4; i++) {
+    d = m_ders[i] = m_smoothers[i]->getDerivative();
+    // if (i == 0) Serial.println(d);
+    if (d > sensitivity_presence) {
+      m_presences[i] = true;
+    } else if (d < (-sensitivity_presence)) {
+      m_presences[i] = false;
     }
+  }
 
-    d = m_der13 = m_smoothers[4]->getDerivative();
-    // Serial.println(d);
-    if (d > sensitivity_movement) {
-      m_movement &= 0b11111100;
-      m_movement |= MOVEMENT_FROM_3_TO_1;
-    } else if (d < (-sensitivity_movement)) {
-      m_movement &= 0b11111100;
-      m_movement |= MOVEMENT_FROM_1_TO_3;
-    }
+  d = m_der13 = m_smoothers[4]->getDerivative();
+  // Serial.println(d);
+  if (d > sensitivity_movement) {
+    m_movement &= 0b11111100;
+    m_movement |= MOVEMENT_FROM_3_TO_1;
+  } else if (d < (-sensitivity_movement)) {
+    m_movement &= 0b11111100;
+    m_movement |= MOVEMENT_FROM_1_TO_3;
+  }
 
-    d = m_der24 = m_smoothers[5]->getDerivative();
-    if (d > sensitivity_movement) {
-      m_movement &= 0b11110011;
-      m_movement |= MOVEMENT_FROM_4_TO_2;
-    } else if (d < (-sensitivity_movement)) {
-      m_movement &= 0b11110011;
-      m_movement |= MOVEMENT_FROM_2_TO_4;
-    }
-
-    m_last_time = now;
+  d = m_der24 = m_smoothers[5]->getDerivative();
+  if (d > sensitivity_movement) {
+    m_movement &= 0b11110011;
+    m_movement |= MOVEMENT_FROM_4_TO_2;
+  } else if (d < (-sensitivity_movement)) {
+    m_movement &= 0b11110011;
+    m_movement |= MOVEMENT_FROM_2_TO_4;
   }
 
   bool value = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];
@@ -162,11 +159,6 @@ void GroveHumanPresenceSensor::set_sensitivity_presence(float value) {
 void GroveHumanPresenceSensor::set_sensitivity_movement(float value) {
   ESP_LOGD(TAG, "Set sensitivity_movement value: %f", value);
   sensitivity_movement = value;
-}
-
-void GroveHumanPresenceSensor::set_detect_interval(int value) {
-  ESP_LOGD(TAG, "Set detect_interval value: %f", value);
-  detect_interval = value;
 }
 
 void GroveHumanPresenceSensor::dump_config() {}

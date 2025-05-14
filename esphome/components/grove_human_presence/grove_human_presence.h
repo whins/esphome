@@ -13,8 +13,6 @@ class GroveHumanPresenceSensor : public sensor::Sensor, public PollingComponent,
  protected:
  private:
   Smoother *m_smoothers[NUM_SMOOTHER];
-  int detect_interval;
-  uint32_t m_last_time;
 
   bool m_presences[4];
   uint8_t m_movement;
@@ -31,7 +29,6 @@ class GroveHumanPresenceSensor : public sensor::Sensor, public PollingComponent,
 
   void set_sensitivity_presence(float value);
   void set_sensitivity_movement(float value);
-  void set_detect_interval(int value);
 
  public:
   void setup() override;
