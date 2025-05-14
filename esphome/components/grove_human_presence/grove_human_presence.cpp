@@ -5,7 +5,7 @@
 namespace esphome {
 namespace grove_human_presence {
 
-static const char *TAG = "grove_human_presence.sensor";
+// static const char *TAG = "grove_human_presence.sensor";
 
 void GroveHumanPresenceSensor::setup() {
   for (int i = 0; i < NUM_SMOOTHER; i++) {
