@@ -317,7 +317,10 @@ void AK975X::startNextSample(void) { getST2(); }
 
 int AK975X::readRegs(int addr, uint8_t *data, int len) {
   // Починаємо читання з регістра `reg` довжиною len байт
-  if (!this->write(&reg, 1)) {
+
+  uint8_t *p = (uint8_t *) &addr;
+
+  if (!this->write(p, 1)) {
     // Помилка передавання регістра
     return 1;
   }
@@ -338,6 +341,7 @@ int AK975X::writeRegs(uint8_t *data, int len) {
   }
 
   return 0;  // OK
+}
 
 }  // namespace grove_human_presence
 }  // namespace esphome
