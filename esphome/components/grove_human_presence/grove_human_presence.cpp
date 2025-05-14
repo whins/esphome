@@ -90,13 +90,14 @@ void GroveHumanPresenceSensor::update() {
   uint32_t now = millis();
 
   uint8_t data;
-  read_register(REG_ST1, &data, 1);
+  this->read_bytes(REG_ST1, &data, 1);
 
-  ESP_LOGD(TAG, "Read REG_ST1 data:  %d", data);
+  ESP_LOGD(TAG, "Read REG_ST1 data:  %0x", data);
 
   // if (!dataReady()) {
   if ((data & 0x01) != 0x01) {
-    ESP_LOGD(TAG, "data is not ready");
+    ESP_LOGW(TAG, "Reading Grove Gas Sensor data failed!");
+    this->status_set_warning();
     return;
   }
 
