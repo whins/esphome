@@ -57,60 +57,60 @@ void GroveHumanPresenceSensor::update() {
   startNextSample();
   ESP_LOGI(TAG, "Start next sample completed");
 
-  ESP_LOGI(TAG, "Add data points to smoothers");
-  // ESP_LOGI(TAG, "Free heap before adding data points: %d", ESP.getFreeHeap());
+  // ESP_LOGI(TAG, "Add data points to smoothers");
+  // // ESP_LOGI(TAG, "Free heap before adding data points: %d", ESP.getFreeHeap());
 
-  m_smoothers[0].addDataPoint(ir1);
-  m_smoothers[1].addDataPoint(ir2);
-  m_smoothers[2].addDataPoint(ir3);
-  m_smoothers[3].addDataPoint(ir4);
-  m_smoothers[4].addDataPoint(diff13);
-  m_smoothers[5].addDataPoint(diff24);
+  // m_smoothers[0].addDataPoint(ir1);
+  // m_smoothers[1].addDataPoint(ir2);
+  // m_smoothers[2].addDataPoint(ir3);
+  // m_smoothers[3].addDataPoint(ir4);
+  // m_smoothers[4].addDataPoint(diff13);
+  // m_smoothers[5].addDataPoint(diff24);
 
-  ESP_LOGI(TAG, "Add data points to smoothers complete");
+  // ESP_LOGI(TAG, "Add data points to smoothers complete");
 
-  ESP_LOGI(TAG, "Fill presences");
+  // ESP_LOGI(TAG, "Fill presences");
 
-  float d;
-  for (int i = 0; i < 4; i++) {
-    d = m_ders[i] = m_smoothers[i].getDerivative();
+  // float d;
+  // for (int i = 0; i < 4; i++) {
+  //   d = m_ders[i] = m_smoothers[i].getDerivative();
 
-    if (d > sensitivity_presence) {
-      m_presences[i] = true;
-    } else if (d < (-sensitivity_presence)) {
-      m_presences[i] = false;
-    }
-  }
+  //   if (d > sensitivity_presence) {
+  //     m_presences[i] = true;
+  //   } else if (d < (-sensitivity_presence)) {
+  //     m_presences[i] = false;
+  //   }
+  // }
 
-  ESP_LOGI(TAG, "Fill presences completed");
+  // ESP_LOGI(TAG, "Fill presences completed");
 
-  ESP_LOGI(TAG, "Check movement");
+  // ESP_LOGI(TAG, "Check movement");
 
-  d = m_der13 = m_smoothers[4].getDerivative();
-  // Serial.println(d);
-  if (d > sensitivity_movement) {
-    m_movement &= 0b11111100;
-    m_movement |= MOVEMENT_FROM_3_TO_1;
-  } else if (d < (-sensitivity_movement)) {
-    m_movement &= 0b11111100;
-    m_movement |= MOVEMENT_FROM_1_TO_3;
-  }
+  // d = m_der13 = m_smoothers[4].getDerivative();
+  // // Serial.println(d);
+  // if (d > sensitivity_movement) {
+  //   m_movement &= 0b11111100;
+  //   m_movement |= MOVEMENT_FROM_3_TO_1;
+  // } else if (d < (-sensitivity_movement)) {
+  //   m_movement &= 0b11111100;
+  //   m_movement |= MOVEMENT_FROM_1_TO_3;
+  // }
 
-  d = m_der24 = m_smoothers[5].getDerivative();
-  if (d > sensitivity_movement) {
-    m_movement &= 0b11110011;
-    m_movement |= MOVEMENT_FROM_4_TO_2;
-  } else if (d < (-sensitivity_movement)) {
-    m_movement &= 0b11110011;
-    m_movement |= MOVEMENT_FROM_2_TO_4;
-  }
+  // d = m_der24 = m_smoothers[5].getDerivative();
+  // if (d > sensitivity_movement) {
+  //   m_movement &= 0b11110011;
+  //   m_movement |= MOVEMENT_FROM_4_TO_2;
+  // } else if (d < (-sensitivity_movement)) {
+  //   m_movement &= 0b11110011;
+  //   m_movement |= MOVEMENT_FROM_2_TO_4;
+  // }
 
-  ESP_LOGI(TAG, "Check movement completed");
+  // ESP_LOGI(TAG, "Check movement completed");
 
   bool value = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];
 
   ESP_LOGI(TAG, "Human present: %s", value);
-  ESP_LOGI(TAG, "Moving: %d", getMovement());
+  // ESP_LOGI(TAG, "Moving: %d", getMovement());
 
   this->publish_state(value);
 }
