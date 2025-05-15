@@ -20,6 +20,11 @@ void GroveHumanPresenceSensor::setup() {
   memset(m_presences, 0, sizeof(m_presences));
   m_movement = MOVEMENT_NONE;
 
+  m_presences[0] = false;
+  m_presences[1] = false;
+  m_presences[2] = false;
+  m_presences[3] = false;
+
   // if (this->initialize()) {
   //   ESP_LOGI(TAG, "Grove Human Presence Sensor initialized successfully.");
   // } else {
@@ -117,11 +122,11 @@ void GroveHumanPresenceSensor::update() {
   diff13 = ir1 - ir3;
   diff24 = ir2 - ir4;
 
-  ESP_LOGD(TAG, "startNextSample");
+  // ESP_LOGD(TAG, "startNextSample");
 
-  startNextSample();
+  // startNextSample();
 
-  ESP_LOGD(TAG, "startNextSample completed");
+  // ESP_LOGD(TAG, "startNextSample completed");
 
   // m_smoothers[0]->addDataPoint(ir1);
   // m_smoothers[1]->addDataPoint(ir2);
