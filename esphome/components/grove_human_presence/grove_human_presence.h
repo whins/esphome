@@ -31,10 +31,6 @@ class GroveHumanPresenceSensor : public sensor::Sensor, public PollingComponent,
   */
   uint8_t getMovement();
 
-  void set_sensitivity_presence(float value);
-  void set_sensitivity_movement(float value);
-  void set_detect_interval(int value);
-  void set_continous_reading(bool value);
   void read_sensors();
   void calc_values();
 
@@ -43,6 +39,34 @@ class GroveHumanPresenceSensor : public sensor::Sensor, public PollingComponent,
   void update() override;
   void dump_config() override;
   void loop() override;
+
+  /**
+   * @brief Set Sensitivity Presence
+   *
+   * @param value - compares with the derivative of the readings of a specific IR sensor (1/2/3/4)
+   */
+  void set_sensitivity_presence(float value);
+
+  /**
+   * @brief Set Sensitivity Movement
+   *
+   * @param value - compares with the derivative of the difference value between IR sensor 1-3 or 2-4
+   */
+  void set_sensitivity_movement(float value);
+
+  /**
+   * @brief Set interval of the presence detection, unit: millisecond
+   *
+   * @param value - the interval of the presence detection, unit: millisecond
+   */
+  void set_detect_interval(int value);
+
+  /**
+   * @brief Set the continous reading object
+   *
+   * @param value
+   */
+  void set_continous_reading(bool value);
 };
 
 }  // namespace grove_human_presence
