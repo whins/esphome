@@ -27,20 +27,20 @@ uint8_t GroveHumanPresenceSensor::getMovement() {
 }
 
 void GroveHumanPresenceSensor::loop() {
-  uint32_t now = millis();
+  // uint32_t now = millis();
 
-  if (!dataReady()) {
-    this->status_set_error();
-    return;
-  }
+  // if (!dataReady()) {
+  //   this->status_set_error();
+  //   return;
+  // }
 
-  read_sensors();
+  // read_sensors();
 
-  if (now - m_last_time > (uint32_t) detect_interval) {
-    calc_sensors();
+  // if (now - m_last_time > (uint32_t) detect_interval) {
+  //   calc_sensors();
 
-    m_last_time = now;
-  }
+  //   m_last_time = now;
+  // }
 }
 
 void GroveHumanPresenceSensor::read_sensors() {
@@ -93,15 +93,15 @@ void GroveHumanPresenceSensor::calc_sensors() {
 }
 
 void GroveHumanPresenceSensor::update() {
-  // if (!dataReady()) {
-  //   ESP_LOGW(TAG, "Data not ready");
-  //   this->status_set_error();
-  //   return;
-  // }
+  if (!dataReady()) {
+    ESP_LOGW(TAG, "Data not ready");
+    this->status_set_error();
+    return;
+  }
 
-  // read_sensors();
+  read_sensors();
 
-  // calc_sensors();
+  calc_sensors();
 
   bool value = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];
 
