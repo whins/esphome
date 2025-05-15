@@ -5,91 +5,25 @@
 namespace esphome {
 namespace grove_human_presence {
 
-// static const char *TAG = "grove_human_presence.sensor";
+#define MAX_RETRIES 3
+#define TIMEOUT_MS 1000
 
 void GroveHumanPresenceSensor::setup() {
-  for (int i = 0; i < NUM_SMOOTHER; i++) {
-    m_smoothers[i] = new Smoother(0.05);  // 0.3 very steep, 0.1 less steep, 0.05 less steep
-  }
+  ESP_LOGI(TAG, "Free heap: %d", ESP.getFreeHeap());
 
   sensitivity_presence = 6.0;
   sensitivity_movement = 10.0;
   detect_interval = 30;
   m_last_time = millis();
-
-  // memset(m_presences, 0, sizeof(m_presences));
   m_movement = MOVEMENT_NONE;
-
-  // m_presences[0] = false;
-  // m_presences[1] = false;
-  // m_presences[2] = false;
-  // m_presences[3] = false;
 
   if (this->initialize()) {
     ESP_LOGI(TAG, "Grove Human Presence Sensor initialized successfully.");
   } else {
     ESP_LOGE(TAG, "Failed to initialize Grove Human Presence Sensor.");
   }
-}
 
-void GroveHumanPresenceSensor::loop() {
-  // float ir1, ir2, ir3, ir4, diff13, diff24;
-  // uint32_t now = millis();
-
-  // if (!dataReady()) {
-  //   return;
-  // }
-
-  // ir1 = getIR1();
-  // ir2 = getIR2();
-  // ir3 = getIR3();
-  // ir4 = getIR4();
-
-  // diff13 = ir1 - ir3;
-  // diff24 = ir2 - ir4;
-
-  // startNextSample();
-
-  // m_smoothers[0]->addDataPoint(ir1);
-  // m_smoothers[1]->addDataPoint(ir2);
-  // m_smoothers[2]->addDataPoint(ir3);
-  // m_smoothers[3]->addDataPoint(ir4);
-  // m_smoothers[4]->addDataPoint(diff13);
-  // m_smoothers[5]->addDataPoint(diff24);
-
-  // if (now - m_last_time > (uint32_t) detect_interval) {
-  //   float d;
-  //   for (int i = 0; i < 4; i++) {
-  //     d = m_ders[i] = m_smoothers[i]->getDerivative();
-  //     // if (i == 0) Serial.println(d);
-  //     if (d > sensitivity_presence) {
-  //       m_presences[i] = true;
-  //     } else if (d < (-sensitivity_presence)) {
-  //       m_presences[i] = false;
-  //     }
-  //   }
-
-  //   d = m_der13 = m_smoothers[4]->getDerivative();
-  //   // Serial.println(d);
-  //   if (d > sensitivity_movement) {
-  //     m_movement &= 0b11111100;
-  //     m_movement |= MOVEMENT_FROM_3_TO_1;
-  //   } else if (d < (-sensitivity_movement)) {
-  //     m_movement &= 0b11111100;
-  //     m_movement |= MOVEMENT_FROM_1_TO_3;
-  //   }
-
-  //   d = m_der24 = m_smoothers[5]->getDerivative();
-  //   if (d > sensitivity_movement) {
-  //     m_movement &= 0b11110011;
-  //     m_movement |= MOVEMENT_FROM_4_TO_2;
-  //   } else if (d < (-sensitivity_movement)) {
-  //     m_movement &= 0b11110011;
-  //     m_movement |= MOVEMENT_FROM_2_TO_4;
-  //   }
-
-  //   m_last_time = now;
-  // }
+  ESP_LOGI(TAG, "Free heap: %d", ESP.getFreeHeap());
 }
 
 uint8_t GroveHumanPresenceSensor::getMovement() {
@@ -100,32 +34,23 @@ uint8_t GroveHumanPresenceSensor::getMovement() {
 
 void GroveHumanPresenceSensor::update() {
   ESP_LOGI(TAG, "Updating sensors data...");
-
-  float ir1, ir2, ir3, ir4, diff13, diff24;
-  uint32_t now = millis();
+  static int retry_count = 0;  // Initialize retry counter
 
   if (!dataReady()) {
-    ESP_LOGW(TAG, "Data not ready!");
-    this->status_set_warning();
+    if (++retry_count < MAX_RETRIES) {
+      ESP_LOGW(TAG, "Data not ready, retry %d/%d", retry_count, MAX_RETRIES);
+      delay(50);  // Коротка затримка перед повторною спробою
+      return;
+    }
+    ESP_LOGE(TAG, "Failed after %d retries", MAX_RETRIES);
+    this->status_set_error();
     return;
   }
+  retry_count = 0;  // Скинути лічильник при успіху
 
-  ESP_LOGI(TAG, "Read IR data");
-
-  ir1 = getIR1();
-  ir2 = getIR2();
-  ir3 = getIR3();
-  ir4 = getIR4();
-
-  ESP_LOGD(TAG, "ir1 %d", ir1);
-  ESP_LOGD(TAG, "ir2 %d", ir2);
-  ESP_LOGD(TAG, "ir3 %d", ir3);
-  ESP_LOGD(TAG, "ir4 %d", ir4);
-
-  diff13 = ir1 - ir3;
-  diff24 = ir2 - ir4;
-  ESP_LOGD(TAG, "diff13 %d", diff13);
-  ESP_LOGD(TAG, "diff24 %d", diff24);
+  float ir1 = getIR1(), ir2 = getIR2(), ir3 = getIR3(), ir4 = getIR4();
+  float diff13 = ir1 - ir3;
+  float diff24 = ir2 - ir4;
 
   ESP_LOGI(TAG, "Read IR data completed");
   ESP_LOGI(TAG, "Start next sample");
@@ -133,13 +58,14 @@ void GroveHumanPresenceSensor::update() {
   ESP_LOGI(TAG, "Start next sample completed");
 
   ESP_LOGI(TAG, "Add data points to smoothers");
+  ESP_LOGI(TAG, "Free heap before adding data points: %d", ESP.getFreeHeap());
 
-  m_smoothers[0]->addDataPoint(ir1);
-  m_smoothers[1]->addDataPoint(ir2);
-  m_smoothers[2]->addDataPoint(ir3);
-  m_smoothers[3]->addDataPoint(ir4);
-  m_smoothers[4]->addDataPoint(diff13);
-  m_smoothers[5]->addDataPoint(diff24);
+  m_smoothers[0].addDataPoint(ir1);
+  m_smoothers[1].addDataPoint(ir2);
+  m_smoothers[2].addDataPoint(ir3);
+  m_smoothers[3].addDataPoint(ir4);
+  m_smoothers[4].addDataPoint(diff13);
+  m_smoothers[5].addDataPoint(diff24);
 
   ESP_LOGI(TAG, "Add data points to smoothers complete");
 
@@ -147,8 +73,8 @@ void GroveHumanPresenceSensor::update() {
 
   float d;
   for (int i = 0; i < 4; i++) {
-    d = m_ders[i] = m_smoothers[i]->getDerivative();
-    // if (i == 0) Serial.println(d);
+    d = m_ders[i] = m_smoothers[i].getDerivative();
+
     if (d > sensitivity_presence) {
       m_presences[i] = true;
     } else if (d < (-sensitivity_presence)) {
@@ -157,9 +83,10 @@ void GroveHumanPresenceSensor::update() {
   }
 
   ESP_LOGI(TAG, "Fill presences completed");
+
   ESP_LOGI(TAG, "Check movement");
 
-  d = m_der13 = m_smoothers[4]->getDerivative();
+  d = m_der13 = m_smoothers[4].getDerivative();
   // Serial.println(d);
   if (d > sensitivity_movement) {
     m_movement &= 0b11111100;
@@ -169,7 +96,7 @@ void GroveHumanPresenceSensor::update() {
     m_movement |= MOVEMENT_FROM_1_TO_3;
   }
 
-  d = m_der24 = m_smoothers[5]->getDerivative();
+  d = m_der24 = m_smoothers[5].getDerivative();
   if (d > sensitivity_movement) {
     m_movement &= 0b11110011;
     m_movement |= MOVEMENT_FROM_4_TO_2;

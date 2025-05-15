@@ -12,9 +12,10 @@ namespace grove_human_presence {
 class GroveHumanPresenceSensor : public sensor::Sensor, public PollingComponent, public AK975X {
  protected:
  private:
-  Smoother *m_smoothers[NUM_SMOOTHER];
+  Smoother m_smoothers[NUM_SMOOTHER] = {Smoother(0.05), Smoother(0.05), Smoother(0.05),
+                                        Smoother(0.05), Smoother(0.05), Smoother(0.05)};
 
-  bool m_presences[4];
+  bool m_presences[4] = {false, false, false, false};
   uint8_t m_movement;
 
   float sensitivity_presence, sensitivity_movement;
@@ -37,7 +38,7 @@ class GroveHumanPresenceSensor : public sensor::Sensor, public PollingComponent,
   void setup() override;
   void update() override;
   void dump_config() override;
-  void loop() override;
+  // void loop() override;
 };
 
 }  // namespace grove_human_presence
