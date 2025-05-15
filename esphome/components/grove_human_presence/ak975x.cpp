@@ -320,6 +320,8 @@ int AK975X::readRegs(int addr, uint8_t *data, int len) {
 
   uint8_t *p = (uint8_t *) &addr;
 
+  ESP_LOGW(TAG, "readRegs: addr: %0x, p: %0x, len: %d", addr, *p, len);
+
   if (!this->write(p, 1)) {
     ESP_LOGW(TAG, "Start registry reading failed!");
     return 1;
