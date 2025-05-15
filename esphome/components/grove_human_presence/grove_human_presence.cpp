@@ -45,10 +45,10 @@ void GroveHumanPresenceSensor::update() {
   float diff13 = ir1 - ir3;
   float diff24 = ir2 - ir4;
 
-  // ESP_LOGI(TAG, "Read IR data completed");
-  // ESP_LOGI(TAG, "Start next sample");
-  // startNextSample();
-  // ESP_LOGI(TAG, "Start next sample completed");
+  ESP_LOGI(TAG, "Read IR data completed");
+  ESP_LOGI(TAG, "Start next sample");
+  startNextSample();
+  ESP_LOGI(TAG, "Start next sample completed");
 
   // ESP_LOGI(TAG, "Add data points to smoothers");
   // // ESP_LOGI(TAG, "Free heap before adding data points: %d", ESP.getFreeHeap());
@@ -100,12 +100,12 @@ void GroveHumanPresenceSensor::update() {
 
   // ESP_LOGI(TAG, "Check movement completed");
 
-  bool value = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];
+  // bool value = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];
 
-  ESP_LOGI(TAG, "Human present: %s", value);
+  // ESP_LOGI(TAG, "Human present: %s", value);
   // ESP_LOGI(TAG, "Moving: %d", getMovement());
 
-  this->publish_state(value);
+  this->publish_state(5.0);
 }
 
 void GroveHumanPresenceSensor::set_sensitivity_presence(float value) {
