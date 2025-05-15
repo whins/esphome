@@ -20,11 +20,11 @@ void GroveHumanPresenceSensor::setup() {
   memset(m_presences, 0, sizeof(m_presences));
   m_movement = MOVEMENT_NONE;
 
-  if (this->initialize()) {
-    ESP_LOGI(TAG, "Grove Human Presence Sensor initialized successfully.");
-  } else {
-    ESP_LOGE(TAG, "Failed to initialize Grove Human Presence Sensor.");
-  }
+  // if (this->initialize()) {
+  //   ESP_LOGI(TAG, "Grove Human Presence Sensor initialized successfully.");
+  // } else {
+  //   ESP_LOGE(TAG, "Failed to initialize Grove Human Presence Sensor.");
+  // }
 }
 
 void GroveHumanPresenceSensor::loop() {
@@ -94,16 +94,13 @@ uint8_t GroveHumanPresenceSensor::getMovement() {
 }
 
 void GroveHumanPresenceSensor::update() {
+  ESP_LOGI(TAG, "Updating sensors data...");
+
   float ir1, ir2, ir3, ir4, diff13, diff24;
   uint32_t now = millis();
 
-  uint8_t data;
-  this->read_bytes(REG_ST1, &data, 1);
-
-  ESP_LOGD(TAG, "Read REG_ST1 data:  %0x", data);
-
   if (!dataReady()) {
-    ESP_LOGW(TAG, "Data not ready failed!");
+    ESP_LOGW(TAG, "Data not ready!");
     this->status_set_warning();
     return;
   }
@@ -120,7 +117,11 @@ void GroveHumanPresenceSensor::update() {
   diff13 = ir1 - ir3;
   diff24 = ir2 - ir4;
 
+  ESP_LOGD(TAG, "startNextSample");
+
   startNextSample();
+
+  ESP_LOGD(TAG, "startNextSample completed");
 
   m_smoothers[0]->addDataPoint(ir1);
   m_smoothers[1]->addDataPoint(ir2);
