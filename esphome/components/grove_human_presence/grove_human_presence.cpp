@@ -117,53 +117,58 @@ void GroveHumanPresenceSensor::update() {
   ir3 = getIR3();
   ir4 = getIR4();
 
-  ESP_LOGI(TAG, "Read ID completed");
+  ESP_LOGD(TAG, "ir1 %d", ir1);
+  ESP_LOGD(TAG, "ir2 %d", ir2);
+  ESP_LOGD(TAG, "ir3 %d", ir3);
+  ESP_LOGD(TAG, "ir4 %d", ir4);
 
   diff13 = ir1 - ir3;
   diff24 = ir2 - ir4;
+  ESP_LOGD(TAG, "diff13 %d", diff13);
+  ESP_LOGD(TAG, "diff24 %d", diff24);
 
-  // ESP_LOGD(TAG, "startNextSample");
+  ESP_LOGI(TAG, "Read IR data completed");
+  ESP_LOGI(TAG, "Start next sample");
+  startNextSample();
+  ESP_LOGI(TAG, "Start next sample completed");
+  ESP_LOGI(TAG, "Add data points to smoothers");
 
-  // startNextSample();
+  m_smoothers[0]->addDataPoint(ir1);
+  m_smoothers[1]->addDataPoint(ir2);
+  m_smoothers[2]->addDataPoint(ir3);
+  m_smoothers[3]->addDataPoint(ir4);
+  m_smoothers[4]->addDataPoint(diff13);
+  m_smoothers[5]->addDataPoint(diff24);
 
-  // ESP_LOGD(TAG, "startNextSample completed");
+  float d;
+  for (int i = 0; i < 4; i++) {
+    d = m_ders[i] = m_smoothers[i]->getDerivative();
+    // if (i == 0) Serial.println(d);
+    if (d > sensitivity_presence) {
+      m_presences[i] = true;
+    } else if (d < (-sensitivity_presence)) {
+      m_presences[i] = false;
+    }
+  }
 
-  // m_smoothers[0]->addDataPoint(ir1);
-  // m_smoothers[1]->addDataPoint(ir2);
-  // m_smoothers[2]->addDataPoint(ir3);
-  // m_smoothers[3]->addDataPoint(ir4);
-  // m_smoothers[4]->addDataPoint(diff13);
-  // m_smoothers[5]->addDataPoint(diff24);
+  d = m_der13 = m_smoothers[4]->getDerivative();
+  // Serial.println(d);
+  if (d > sensitivity_movement) {
+    m_movement &= 0b11111100;
+    m_movement |= MOVEMENT_FROM_3_TO_1;
+  } else if (d < (-sensitivity_movement)) {
+    m_movement &= 0b11111100;
+    m_movement |= MOVEMENT_FROM_1_TO_3;
+  }
 
-  // float d;
-  // for (int i = 0; i < 4; i++) {
-  //   d = m_ders[i] = m_smoothers[i]->getDerivative();
-  //   // if (i == 0) Serial.println(d);
-  //   if (d > sensitivity_presence) {
-  //     m_presences[i] = true;
-  //   } else if (d < (-sensitivity_presence)) {
-  //     m_presences[i] = false;
-  //   }
-  // }
-
-  // d = m_der13 = m_smoothers[4]->getDerivative();
-  // // Serial.println(d);
-  // if (d > sensitivity_movement) {
-  //   m_movement &= 0b11111100;
-  //   m_movement |= MOVEMENT_FROM_3_TO_1;
-  // } else if (d < (-sensitivity_movement)) {
-  //   m_movement &= 0b11111100;
-  //   m_movement |= MOVEMENT_FROM_1_TO_3;
-  // }
-
-  // d = m_der24 = m_smoothers[5]->getDerivative();
-  // if (d > sensitivity_movement) {
-  //   m_movement &= 0b11110011;
-  //   m_movement |= MOVEMENT_FROM_4_TO_2;
-  // } else if (d < (-sensitivity_movement)) {
-  //   m_movement &= 0b11110011;
-  //   m_movement |= MOVEMENT_FROM_2_TO_4;
-  // }
+  d = m_der24 = m_smoothers[5]->getDerivative();
+  if (d > sensitivity_movement) {
+    m_movement &= 0b11110011;
+    m_movement |= MOVEMENT_FROM_4_TO_2;
+  } else if (d < (-sensitivity_movement)) {
+    m_movement &= 0b11110011;
+    m_movement |= MOVEMENT_FROM_2_TO_4;
+  }
 
   bool value = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];
 
