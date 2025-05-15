@@ -29,7 +29,7 @@ bool AK975X::initialize(void) {
 */
 uint8_t AK975X::getCompanyCode(void) {
   uint8_t data;
-  read_register(REG_WIA1, &data, 1);
+  read_bytes(REG_WIA1, &data, 1);
   return (data);
 }
 
@@ -39,38 +39,38 @@ uint8_t AK975X::getCompanyCode(void) {
 */
 uint8_t AK975X::getDeviceID(void) {
   uint8_t data;
-  read_register(REG_WIA2, &data, 1);
+  read_bytes(REG_WIA2, &data, 1);
   return (data);
 }
 
 bool AK975X::dataReady(void) { /* returns ST1[0], read ST2 to clear */
   uint8_t data;
-  read_register(REG_ST1, &data, 1);
+  read_bytes(REG_ST1, &data, 1);
   return ((data & 0x01) == 0x01);
 }
 
 bool AK975X::dataOverRun(void) {
   uint8_t data;
-  read_register(REG_ST2, &data, 1);
+  read_bytes(REG_ST2, &data, 1);
   return ((data & 0x02) == 0x02);
 }
 
 uint8_t AK975X::getINTST(void) { /** return REG_INTST */
   uint8_t data;
-  read_register(REG_INTST, &data, 1);
+  read_bytes(REG_INTST, &data, 1);
   return (data);
 }
 
 uint8_t AK975X::getST1(void) {
   uint8_t data;
-  read_register(REG_ST1, &data, 1);
+  read_bytes(REG_ST1, &data, 1);
   return (data);
 }
 
 int16_t AK975X::getRawIR1(void) {
   uint8_t data[2];
   int16_t IR;
-  read_register(REG_IR1L, data, 2);
+  read_bytes(REG_IR1L, data, 2);
   IR = (data[1] << 8) | data[0];
   return (IR);
 }
@@ -86,7 +86,7 @@ float AK975X::getIR1(void) {
 int16_t AK975X::getRawIR2(void) {
   uint8_t data[2];
   int16_t IR;
-  read_register(REG_IR2L, data, 2);
+  read_bytes(REG_IR2L, data, 2);
   IR = (data[1] << 8) | data[0];
   return (IR);
 }
@@ -102,7 +102,7 @@ float AK975X::getIR2(void) {
 int16_t AK975X::getRawIR3(void) {
   uint8_t data[2];
   int16_t IR;
-  read_register(REG_IR3L, data, 2);
+  read_bytes(REG_IR3L, data, 2);
   IR = (data[1] << 8) | data[0];
   return (IR);
 }
@@ -118,7 +118,7 @@ float AK975X::getIR3(void) {
 int16_t AK975X::getRawIR4(void) {
   uint8_t data[2];
   int16_t IR;
-  read_register(REG_IR4L, data, 2);
+  read_bytes(REG_IR4L, data, 2);
   IR = (data[1] << 8) | data[0];
   return (IR);
 }
@@ -134,7 +134,7 @@ float AK975X::getIR4(void) {
 int16_t AK975X::getRawTMP(void) {
   uint8_t data[2];
   int16_t temp;
-  read_register(REG_TMPL, data, 2);
+  read_bytes(REG_TMPL, data, 2);
   temp = (data[1] << 8) | data[0];
   return (temp);
 }
@@ -159,14 +159,14 @@ float AK975X::getTMP_F(void) {
 
 uint8_t AK975X::getST2(void) {
   uint8_t data;
-  read_register(REG_ST2, &data, 1);
+  read_bytes(REG_ST2, &data, 1);
   return (data);
 }
 
 int16_t AK975X::getETH13H(void) {
   int16_t value;
   uint8_t data[2];
-  read_register(REG_ETH13H_LSB, data, 2);
+  read_bytes(REG_ETH13H_LSB, data, 2);
   value = (data[1] << 8) | data[0];
   return (value);
 }
@@ -174,7 +174,7 @@ int16_t AK975X::getETH13H(void) {
 int16_t AK975X::getETH13L(void) {
   int16_t value;
   uint8_t data[2];
-  read_register(REG_ETH13L_LSB, data, 2);
+  read_bytes(REG_ETH13L_LSB, data, 2);
   value = (data[1] << 8) | data[0];
   return (value);
 }
@@ -182,7 +182,7 @@ int16_t AK975X::getETH13L(void) {
 int16_t AK975X::getETH24H(void) {
   int16_t value;
   uint8_t data[2];
-  read_register(REG_ETH24H_LSB, data, 2);
+  read_bytes(REG_ETH24H_LSB, data, 2);
   value = (data[1] << 8) | data[0];
   return (value);
 }
@@ -190,38 +190,38 @@ int16_t AK975X::getETH24H(void) {
 int16_t AK975X::getETH24L(void) {
   int16_t value;
   uint8_t data[2];
-  read_register(REG_ETH24L_LSB, data, 2);
+  read_bytes(REG_ETH24L_LSB, data, 2);
   value = (data[1] << 8) | data[0];
   return (value);
 }
 
 uint8_t AK975X::getEHYS13(void) {
   uint8_t data;
-  read_register(REG_EHYS13, &data, 1);
+  read_bytes(REG_EHYS13, &data, 1);
   return (data);
 }
 
 uint8_t AK975X::getEHYS24(void) {
   uint8_t data;
-  read_register(REG_EHYS24, &data, 1);
+  read_bytes(REG_EHYS24, &data, 1);
   return (data);
 }
 
 uint8_t AK975X::getEINTEN(void) {
   uint8_t data;
-  read_register(REG_EINTEN, &data, 1);
+  read_bytes(REG_EINTEN, &data, 1);
   return (data);
 }
 
 uint8_t AK975X::getECNTL1(void) {
   uint8_t data;
-  read_register(REG_ECNTL1, &data, 1);
+  read_bytes(REG_ECNTL1, &data, 1);
   return (data);
 }
 
 uint8_t AK975X::getCNTL2(void) {
   uint8_t data;
-  read_register(REG_CNTL2, &data, 1);
+  read_bytes(REG_CNTL2, &data, 1);
   return (data);
 }
 
