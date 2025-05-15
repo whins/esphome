@@ -82,7 +82,11 @@ void GroveHumanPresenceSensor::update() {
 
   bool value = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];
 
-  ESP_LOGD(TAG, "Presence: %s ", value ? "true" : "false");
+  for (int i = 0; i < 4; i++) {
+    m_presences[i] = false;
+  }
+
+  ESP_LOGD(TAG, "Presence: %d ", value ? 1 : 0);
   ESP_LOGD(TAG, "Moving: %d ", getMovement());
 
   this->publish_state(value ? 1 : 0);
