@@ -9,7 +9,7 @@ namespace grove_human_presence {
 #define TIMEOUT_MS 1000
 
 void GroveHumanPresenceSensor::setup() {
-  ESP_LOGI(TAG, "Free heap: %d", ESP.getFreeHeap());
+  // ESP_LOGI(TAG, "Free heap: %d", ESP.getFreeHeap());
 
   sensitivity_presence = 6.0;
   sensitivity_movement = 10.0;
@@ -23,7 +23,7 @@ void GroveHumanPresenceSensor::setup() {
     ESP_LOGE(TAG, "Failed to initialize Grove Human Presence Sensor.");
   }
 
-  ESP_LOGI(TAG, "Free heap: %d", ESP.getFreeHeap());
+  // ESP_LOGI(TAG, "Free heap: %d", ESP.getFreeHeap());
 }
 
 uint8_t GroveHumanPresenceSensor::getMovement() {
@@ -58,7 +58,7 @@ void GroveHumanPresenceSensor::update() {
   ESP_LOGI(TAG, "Start next sample completed");
 
   ESP_LOGI(TAG, "Add data points to smoothers");
-  ESP_LOGI(TAG, "Free heap before adding data points: %d", ESP.getFreeHeap());
+  // ESP_LOGI(TAG, "Free heap before adding data points: %d", ESP.getFreeHeap());
 
   m_smoothers[0].addDataPoint(ir1);
   m_smoothers[1].addDataPoint(ir2);
