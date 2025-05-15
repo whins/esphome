@@ -9,8 +9,8 @@ namespace grove_human_presence {
 #define TIMEOUT_MS 1000
 
 void GroveHumanPresenceSensor::setup() {
-  sensitivity_presence = 6.0;
-  sensitivity_movement = 10.0;
+  sensitivity_presence = 60.0;
+  sensitivity_movement = 100.0;
   detect_interval = 30;
   m_last_time = millis();
   m_movement = MOVEMENT_NONE;
