@@ -9,8 +9,6 @@ namespace grove_human_presence {
 #define TIMEOUT_MS 1000
 
 void GroveHumanPresenceSensor::setup() {
-  // ESP_LOGI(TAG, "Free heap: %d", ESP.getFreeHeap());
-
   sensitivity_presence = 6.0;
   sensitivity_movement = 10.0;
   detect_interval = 30;
@@ -18,8 +16,6 @@ void GroveHumanPresenceSensor::setup() {
   m_movement = MOVEMENT_NONE;
 
   if (this->initialize()) {
-    ESP_LOGI(TAG, "Grove Human Presence Sensor initialized successfully.");
-  } else {
     ESP_LOGE(TAG, "Failed to initialize Grove Human Presence Sensor.");
   }
 }
@@ -51,6 +47,7 @@ void GroveHumanPresenceSensor::update() {
   m_smoothers[5].addDataPoint(diff24);
 
   float d;
+
   for (int i = 0; i < 4; i++) {
     d = m_ders[i] = m_smoothers[i].getDerivative();
 
@@ -62,7 +59,7 @@ void GroveHumanPresenceSensor::update() {
   }
 
   d = m_der13 = m_smoothers[4].getDerivative();
-  // Serial.println(d);
+
   if (d > sensitivity_movement) {
     m_movement &= 0b11111100;
     m_movement |= MOVEMENT_FROM_3_TO_1;
@@ -72,6 +69,7 @@ void GroveHumanPresenceSensor::update() {
   }
 
   d = m_der24 = m_smoothers[5].getDerivative();
+
   if (d > sensitivity_movement) {
     m_movement &= 0b11110011;
     m_movement |= MOVEMENT_FROM_4_TO_2;
