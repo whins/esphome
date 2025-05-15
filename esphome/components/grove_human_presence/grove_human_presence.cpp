@@ -17,7 +17,7 @@ void GroveHumanPresenceSensor::setup() {
   detect_interval = 30;
   m_last_time = millis();
 
-  memset(m_presences, 0, sizeof(m_presences));
+  // memset(m_presences, 0, sizeof(m_presences));
   m_movement = MOVEMENT_NONE;
 
   // m_presences[0] = false;
@@ -131,6 +131,7 @@ void GroveHumanPresenceSensor::update() {
   ESP_LOGI(TAG, "Start next sample");
   startNextSample();
   ESP_LOGI(TAG, "Start next sample completed");
+
   ESP_LOGI(TAG, "Add data points to smoothers");
 
   m_smoothers[0]->addDataPoint(ir1);
@@ -139,6 +140,10 @@ void GroveHumanPresenceSensor::update() {
   m_smoothers[3]->addDataPoint(ir4);
   m_smoothers[4]->addDataPoint(diff13);
   m_smoothers[5]->addDataPoint(diff24);
+
+  ESP_LOGI(TAG, "Add data points to smoothers complete");
+
+  ESP_LOGI(TAG, "Fill presences");
 
   float d;
   for (int i = 0; i < 4; i++) {
@@ -150,6 +155,9 @@ void GroveHumanPresenceSensor::update() {
       m_presences[i] = false;
     }
   }
+
+  ESP_LOGI(TAG, "Fill presences completed");
+  ESP_LOGI(TAG, "Check movement");
 
   d = m_der13 = m_smoothers[4]->getDerivative();
   // Serial.println(d);
@@ -169,6 +177,8 @@ void GroveHumanPresenceSensor::update() {
     m_movement &= 0b11110011;
     m_movement |= MOVEMENT_FROM_2_TO_4;
   }
+
+  ESP_LOGI(TAG, "Check movement completed");
 
   bool value = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];
 
