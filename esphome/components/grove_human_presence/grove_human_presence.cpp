@@ -98,14 +98,15 @@ void GroveHumanPresenceSensor::update() {
   //   m_movement |= MOVEMENT_FROM_2_TO_4;
   // }
 
-  // ESP_LOGI(TAG, "Check movement completed");
+  ESP_LOGI(TAG, "Check movement completed");
 
-  // bool value = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];
+  bool value = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];
 
-  // ESP_LOGI(TAG, "Human present: %s", value);
+  ESP_LOGI(TAG, "Human present: %s", value ? "true" : "false");
+
   // ESP_LOGI(TAG, "Moving: %d", getMovement());
 
-  this->publish_state(5.0);
+  this->publish_state(value ? 1.0 : 0);
 }
 
 void GroveHumanPresenceSensor::set_sensitivity_presence(float value) {
