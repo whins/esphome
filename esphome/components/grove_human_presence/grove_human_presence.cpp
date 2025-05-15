@@ -34,28 +34,21 @@ uint8_t GroveHumanPresenceSensor::getMovement() {
 
 void GroveHumanPresenceSensor::update() {
   ESP_LOGI(TAG, "Updating sensors data...");
-  static int retry_count = 0;  // Initialize retry counter
 
   if (!dataReady()) {
-    if (++retry_count < MAX_RETRIES) {
-      ESP_LOGW(TAG, "Data not ready, retry %d/%d", retry_count, MAX_RETRIES);
-      delay(50);  // Коротка затримка перед повторною спробою
-      return;
-    }
-    ESP_LOGE(TAG, "Failed after %d retries", MAX_RETRIES);
+    ESP_LOGE(TAG, "Data not ready");
     this->status_set_error();
     return;
   }
-  retry_count = 0;  // Скинути лічильник при успіху
 
   float ir1 = getIR1(), ir2 = getIR2(), ir3 = getIR3(), ir4 = getIR4();
   float diff13 = ir1 - ir3;
   float diff24 = ir2 - ir4;
 
-  ESP_LOGI(TAG, "Read IR data completed");
-  ESP_LOGI(TAG, "Start next sample");
-  startNextSample();
-  ESP_LOGI(TAG, "Start next sample completed");
+  // ESP_LOGI(TAG, "Read IR data completed");
+  // ESP_LOGI(TAG, "Start next sample");
+  // startNextSample();
+  // ESP_LOGI(TAG, "Start next sample completed");
 
   // ESP_LOGI(TAG, "Add data points to smoothers");
   // // ESP_LOGI(TAG, "Free heap before adding data points: %d", ESP.getFreeHeap());
