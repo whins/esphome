@@ -22,8 +22,6 @@ void GroveHumanPresenceSensor::setup() {
   } else {
     ESP_LOGE(TAG, "Failed to initialize Grove Human Presence Sensor.");
   }
-
-  // ESP_LOGI(TAG, "Free heap: %d", ESP.getFreeHeap());
 }
 
 uint8_t GroveHumanPresenceSensor::getMovement() {
@@ -33,10 +31,8 @@ uint8_t GroveHumanPresenceSensor::getMovement() {
 }
 
 void GroveHumanPresenceSensor::update() {
-  ESP_LOGI(TAG, "Updating sensors data...");
-
   if (!dataReady()) {
-    ESP_LOGE(TAG, "Data not ready");
+    ESP_LOGW(TAG, "Data not ready");
     this->status_set_error();
     return;
   }
@@ -45,13 +41,7 @@ void GroveHumanPresenceSensor::update() {
   float diff13 = ir1 - ir3;
   float diff24 = ir2 - ir4;
 
-  ESP_LOGI(TAG, "Read IR data completed");
-  ESP_LOGI(TAG, "Start next sample");
   startNextSample();
-  ESP_LOGI(TAG, "Start next sample completed");
-
-  // ESP_LOGI(TAG, "Add data points to smoothers");
-  // // ESP_LOGI(TAG, "Free heap before adding data points: %d", ESP.getFreeHeap());
 
   m_smoothers[0].addDataPoint(ir1);
   m_smoothers[1].addDataPoint(ir2);
@@ -59,10 +49,6 @@ void GroveHumanPresenceSensor::update() {
   m_smoothers[3].addDataPoint(ir4);
   m_smoothers[4].addDataPoint(diff13);
   m_smoothers[5].addDataPoint(diff24);
-
-  ESP_LOGI(TAG, "Add data points to smoothers complete");
-
-  ESP_LOGI(TAG, "Fill presences");
 
   float d;
   for (int i = 0; i < 4; i++) {
@@ -74,10 +60,6 @@ void GroveHumanPresenceSensor::update() {
       m_presences[i] = false;
     }
   }
-
-  ESP_LOGI(TAG, "Fill presences completed");
-
-  ESP_LOGI(TAG, "Check movement");
 
   d = m_der13 = m_smoothers[4].getDerivative();
   // Serial.println(d);
@@ -98,15 +80,12 @@ void GroveHumanPresenceSensor::update() {
     m_movement |= MOVEMENT_FROM_2_TO_4;
   }
 
-  ESP_LOGI(TAG, "Check movement completed");
-
   bool value = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];
 
-  ESP_LOGI(TAG, "Human present: %s", value ? "true" : "false");
+  ESP_LOGD(TAG, "Presence: %s ", value ? "true" : "false");
+  ESP_LOGD(TAG, "Moving: %d ", getMovement());
 
-  ESP_LOGI(TAG, "Moving: %d", getMovement());
-
-  this->publish_state(value ? 1.0 : 0);
+  this->publish_state(value ? 1 : 0);
 }
 
 void GroveHumanPresenceSensor::set_sensitivity_presence(float value) {
