@@ -27,20 +27,23 @@ uint8_t GroveHumanPresenceSensor::getMovement() {
 }
 
 void GroveHumanPresenceSensor::loop() {
-  // uint32_t now = millis();
+  if (!continous_reading) {
+    return;
+  }
 
-  // if (!dataReady()) {
-  //   this->status_set_error();
-  //   return;
-  // }
+  uint32_t now = millis();
 
-  // read_sensors();
+  if (!dataReady()) {
+    this->status_set_error();
+    return;
+  }
 
-  // if (now - m_last_time > (uint32_t) detect_interval) {
-  //   calc_sensors();
+  read_sensors();
 
-  //   m_last_time = now;
-  // }
+  if (now - m_last_time > (uint32_t) detect_interval) {
+    calc_values();
+    m_last_time = now;
+  }
 }
 
 void GroveHumanPresenceSensor::read_sensors() {
@@ -58,7 +61,7 @@ void GroveHumanPresenceSensor::read_sensors() {
   m_smoothers[5].addDataPoint(diff24);
 }
 
-void GroveHumanPresenceSensor::calc_sensors() {
+void GroveHumanPresenceSensor::calc_values() {
   float d;
 
   for (int i = 0; i < 4; i++) {
@@ -93,15 +96,17 @@ void GroveHumanPresenceSensor::calc_sensors() {
 }
 
 void GroveHumanPresenceSensor::update() {
-  if (!dataReady()) {
-    ESP_LOGW(TAG, "Data not ready");
-    this->status_set_error();
-    return;
+  if (!continous_reading) {
+    if (!dataReady()) {
+      ESP_LOGW(TAG, "Data not ready");
+      this->status_set_error();
+      return;
+    }
+
+    read_sensors();
+
+    calc_values();
   }
-
-  read_sensors();
-
-  calc_sensors();
 
   bool value = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];
 
@@ -124,9 +129,15 @@ void GroveHumanPresenceSensor::set_sensitivity_movement(float value) {
   ESP_LOGD(TAG, "Set sensitivity_movement value: %f", value);
   sensitivity_movement = value;
 }
+
 void GroveHumanPresenceSensor::set_detect_interval(int value) {
   ESP_LOGD(TAG, "Set detect_interval value: %f", value);
   detect_interval = value;
+}
+
+void GroveHumanPresenceSensor::set_continous_reading(bool value) {
+  ESP_LOGD(TAG, "Set detect_interval value: %s", value ? "true" : "false");
+  continous_reading = value;
 }
 
 void GroveHumanPresenceSensor::dump_config() {}

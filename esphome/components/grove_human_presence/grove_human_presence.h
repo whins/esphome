@@ -23,6 +23,7 @@ class GroveHumanPresenceSensor : public sensor::Sensor, public PollingComponent,
   uint32_t m_last_time;
   float m_ders[4];
   float m_der13, m_der24;
+  bool continous_reading = false;
 
   /**
       Read the movement flags, clear after read
@@ -33,8 +34,9 @@ class GroveHumanPresenceSensor : public sensor::Sensor, public PollingComponent,
   void set_sensitivity_presence(float value);
   void set_sensitivity_movement(float value);
   void set_detect_interval(int value);
+  void set_continous_reading(bool value);
   void read_sensors();
-  void calc_sensors();
+  void calc_values();
 
  public:
   void setup() override;
