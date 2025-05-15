@@ -18,6 +18,8 @@ class GroveHumanPresenceSensor : public sensor::Sensor, public PollingComponent,
   uint8_t m_movement;
 
   float sensitivity_presence, sensitivity_movement;
+  int detect_interval;
+  uint32_t m_last_time;
   float m_ders[4];
   float m_der13, m_der24;
 
@@ -29,12 +31,13 @@ class GroveHumanPresenceSensor : public sensor::Sensor, public PollingComponent,
 
   void set_sensitivity_presence(float value);
   void set_sensitivity_movement(float value);
+  void set_detect_interval(int value);
 
  public:
   void setup() override;
   void update() override;
   void dump_config() override;
-  // void loop() override;
+  void loop() override;
 };
 
 }  // namespace grove_human_presence

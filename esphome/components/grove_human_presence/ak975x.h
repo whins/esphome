@@ -123,8 +123,7 @@ class AK975X : public i2c::I2CDevice {
   void softReset(void);
 
  protected:
-  int readRegs(int addr, uint8_t *data, int len);
-  int writeRegs(uint8_t *data, int len);
+  //
 
  public:
   /**
