@@ -26,13 +26,24 @@ uint8_t GroveHumanPresenceSensor::getMovement() {
   return r;
 }
 
-void GroveHumanPresenceSensor::update() {
+void GroveHumanPresenceSensor::loop() {
+  uint32_t now = millis();
+
   if (!dataReady()) {
-    ESP_LOGW(TAG, "Data not ready");
     this->status_set_error();
     return;
   }
 
+  read_sensors();
+
+  if (now - m_last_time > (uint32_t) detect_interval) {
+    calc_sensors();
+
+    m_last_time = now;
+  }
+}
+
+void GroveHumanPresenceSensor::read_sensors() {
   float ir1 = getIR1(), ir2 = getIR2(), ir3 = getIR3(), ir4 = getIR4();
   float diff13 = ir1 - ir3;
   float diff24 = ir2 - ir4;
@@ -45,7 +56,9 @@ void GroveHumanPresenceSensor::update() {
   m_smoothers[3].addDataPoint(ir4);
   m_smoothers[4].addDataPoint(diff13);
   m_smoothers[5].addDataPoint(diff24);
+}
 
+void GroveHumanPresenceSensor::calc_sensors() {
   float d;
 
   for (int i = 0; i < 4; i++) {
@@ -77,6 +90,18 @@ void GroveHumanPresenceSensor::update() {
     m_movement &= 0b11110011;
     m_movement |= MOVEMENT_FROM_2_TO_4;
   }
+}
+
+void GroveHumanPresenceSensor::update() {
+  // if (!dataReady()) {
+  //   ESP_LOGW(TAG, "Data not ready");
+  //   this->status_set_error();
+  //   return;
+  // }
+
+  // read_sensors();
+
+  // calc_sensors();
 
   bool value = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];
 
