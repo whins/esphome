@@ -25,11 +25,11 @@ void GroveHumanPresenceSensor::setup() {
   // m_presences[2] = false;
   // m_presences[3] = false;
 
-  // if (this->initialize()) {
-  //   ESP_LOGI(TAG, "Grove Human Presence Sensor initialized successfully.");
-  // } else {
-  //   ESP_LOGE(TAG, "Failed to initialize Grove Human Presence Sensor.");
-  // }
+  if (this->initialize()) {
+    ESP_LOGI(TAG, "Grove Human Presence Sensor initialized successfully.");
+  } else {
+    ESP_LOGE(TAG, "Failed to initialize Grove Human Presence Sensor.");
+  }
 }
 
 void GroveHumanPresenceSensor::loop() {
