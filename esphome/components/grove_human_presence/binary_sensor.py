@@ -26,4 +26,4 @@ async def to_code(config):
 
     if occupancy_config := config.get(CONF_OCCUPANCY):
         snsr = await binary_sensor.new_binary_sensor(occupancy_config)
-        cg.add(grove_human_presence_component.set_occupancy_binary_sensor_(snsr))
+        cg.add(grove_human_presence_component.set_occupancy_binary_sensor(snsr))

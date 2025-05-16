@@ -41,8 +41,8 @@ async def to_code(config):
 
     if motion_config := config.get(CONF_MOTION):
         snsr = await sensor.new_sensor(motion_config)
-        cg.add(grove_human_presence_component.set_motion_sensor_(snsr))
+        cg.add(grove_human_presence_component.set_motion_sensor(snsr))
 
     if temperature_config := config.get(CONF_TEMPERATURE):
         snsr = await sensor.new_sensor(temperature_config)
-        cg.add(grove_human_presence_component.set_temperature_sensor_(snsr))
+        cg.add(grove_human_presence_component.set_temperature_sensor(snsr))
