@@ -37,8 +37,8 @@ class GroveHumanPresenceComponent : public PollingComponent, public AK975X {
   void calc_values();
 
  protected:
-  binary_sensor::BinarySensor *presence_sensor{nullptr};
-  sensor::Sensor *movement_sensor{nullptr};
+  binary_sensor::BinarySensor *occupancy_sensor{nullptr};
+  sensor::Sensor *motion_sensor{nullptr};
   sensor::Sensor *temperature_sensor{nullptr};
 
  public:
@@ -47,8 +47,8 @@ class GroveHumanPresenceComponent : public PollingComponent, public AK975X {
   void dump_config() override;
   void loop() override;
 
-  void set_presence_binary_sensor(binary_sensor::BinarySensor *bs) { presence_sensor = bs; }
-  void set_movement_sensor(sensor::Sensor *s) { movement_sensor = s; }
+  void set_occupancy_sensor(binary_sensor::BinarySensor *bs) { occupancy_sensor = bs; }
+  void set_motion_sensor(sensor::Sensor *s) { motion_sensor = s; }
   void set_temperature_sensor(sensor::Sensor *s) { temperature_sensor = s; }
 
   /**

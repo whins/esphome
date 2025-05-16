@@ -113,21 +113,21 @@ void GroveHumanPresenceComponent::update() {
     calc_values();
   }
 
-  bool presence = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];
+  bool occupancy = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];
 
   for (int i = 0; i < 4; i++) {
     m_presences[i] = false;
   }
 
-  if (presence_sensor != nullptr) {
-    ESP_LOGD(TAG, "Presence: %d ", presence ? 1 : 0);
-    presence_sensor->publish_state(presence);
+  if (occupancy_sensor != nullptr) {
+    ESP_LOGD(TAG, "Presence: %d ", occupancy ? 1 : 0);
+    occupancy_sensor->publish_state(occupancy);
   }
 
-  if (movement_sensor != nullptr) {
+  if (motion_sensor != nullptr) {
     uint8_t moving = getMovement();
     ESP_LOGD(TAG, "Moving: %d ", moving);
-    movement_sensor->publish_state(moving);
+    motion_sensor->publish_state(moving);
   }
 
   if (temperature_sensor != nullptr) {

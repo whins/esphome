@@ -8,6 +8,8 @@
 sensor:
   - platform: grove_human_presence
     name: "Grove Human Presence"
+    update_interval: 5s
+    address: 0x64
     occupancy:
       name: "Occupancy"
     motion:
