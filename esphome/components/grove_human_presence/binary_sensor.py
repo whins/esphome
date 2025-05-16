@@ -24,5 +24,5 @@ async def to_code(config):
     grove_human_presence_component = await cg.get_variable(config[CONF_AK975X_ID])
 
     if occupancy_config := config.get(CONF_OCCUPANCY):
-        sensor = await binary_sensor.new_binary_sensor(occupancy_config)
-        cg.add(grove_human_presence_component.set_occupancy_binary_sensor(sensor))
+        snsr = await binary_sensor.new_binary_sensor(occupancy_config)
+        cg.add(grove_human_presence_component.set_occupancy_binary_sensor(snsr))

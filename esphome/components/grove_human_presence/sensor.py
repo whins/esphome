@@ -41,9 +41,9 @@ async def to_code(config):
     grove_human_presence_component = await cg.get_variable(config[CONF_AK975X_ID])
 
     if motion_config := config.get(CONF_MOTION):
-        sensor = await sensor.new_sensor(motion_config)
-        cg.add(grove_human_presence_component.set_motion_sensor(sensor))
+        snsr = await sensor.new_sensor(motion_config)
+        cg.add(grove_human_presence_component.set_motion_sensor(snsr))
 
     if temperature_config := config.get(CONF_TEMPERATURE):
-        sensor = await sensor.new_sensor(temperature_config)
-        cg.add(grove_human_presence_component.set_temperature_sensor(sensor))
+        snsr = await sensor.new_sensor(temperature_config)
+        cg.add(grove_human_presence_component.set_temperature_sensor(snsr))
