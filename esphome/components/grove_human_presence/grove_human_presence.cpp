@@ -111,7 +111,19 @@ void GroveHumanPresenceComponent::set_motion_sensitivity(float value) {
   motion_sensitivity = value;
 }
 
-void GroveHumanPresenceComponent::dump_config() {}
+void GroveHumanPresenceComponent::dump_config() {
+  ESP_LOGCONFIG(TAG, "GroveHumanPresence:");
+#ifdef USE_BINARY_SENSOR
+  LOG_BINARY_SENSOR("  ", "OccupancyBinarySensor", this->occupancy_binary_sensor_);
+#endif
+#ifdef USE_SENSOR
+  LOG_SENSOR("  ", "MotionSensor", this->motion_sensor_);
+  LOG_SENSOR("  ", "TemperatureSensor", this->temperature_sensor_);
+#endif
+
+  ESP_LOGCONFIG(TAG, "  Occupancy sensitivity: %.2f", occupancy_sensitivity);
+  ESP_LOGCONFIG(TAG, "  Motion sensitivity: %.2f", motion_sensitivity);
+}
 
 }  // namespace grove_human_presence
 }  // namespace esphome

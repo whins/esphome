@@ -53,8 +53,6 @@ class GroveHumanPresenceComponent : public PollingComponent, public AK975X {
   void setup() override;
   void update() override;
   void dump_config() override;
-  void loop() override;
-  void factory_reset();
 
   void set_occupancy_sensitivity(float value);
   void set_motion_sensitivity(float value);
