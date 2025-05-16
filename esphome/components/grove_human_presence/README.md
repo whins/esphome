@@ -7,7 +7,13 @@
 ```yaml
 sensor:
   - platform: grove_human_presence
-    name: Grove Human Presence Sensor
+    name: "Grove Human Presence"
+    occupancy:
+      name: "Occupancy"
+    motion:
+      name: "Motion"
+    temperature:
+      name: "Temperature"
 
 # esp32c3
 i2c:
