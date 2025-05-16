@@ -1,4 +1,4 @@
-#include "esphome/core/log.h"
+
 #include "grove_human_presence.h"
 #include "smoother.h"  // Include the header for Smoother
 
