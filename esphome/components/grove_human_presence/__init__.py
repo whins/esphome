@@ -24,10 +24,10 @@ CONFIG_SCHEMA = (
         {
             cv.GenerateID(): cv.declare_id(GroveHumanPresenceComponent),
             cv.Optional(CONF_OCCUPANCY_SENSITIVITY, default=1.0): cv.All(
-                cv.float_range(min=1.0, max=5.0),
+                cv.float_range(min=1.0, max=6.0),
             ),
             cv.Optional(CONF_MOTION_SENSITIVITY, default=2.0): cv.All(
-                cv.float_range(min=1.0, max=15.0),
+                cv.float_range(min=1.0, max=12.0),
             ),
         }
     )
