@@ -35,12 +35,12 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Optional(CONF_DETECT_INTERVAL, default=30): cv.All(
             cv.float_range(min=10, max=500),
         ),
-        cv.Optional(CONF_CONTINOUS_READING, default=False): cv.All(
-            cv.boolean,
-        ),
-        cv.Optional(CONF_DISABLED, default=False): cv.All(
-            cv.boolean,
-        ),
+        # cv.Optional(CONF_CONTINOUS_READING, default=False): cv.All(
+        #     cv.boolean,
+        # ),
+        # cv.Optional(CONF_DISABLED, default=False): cv.All(
+        #     cv.boolean,
+        # ),
     }
 )
 
