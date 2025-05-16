@@ -2,9 +2,9 @@
 
 #include "esphome/core/log.h"
 #include "esphome/core/component.h"
+#include "esphome/components/binary_sensor/binary_sensor.h"
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/i2c/i2c.h"
-#include "esphome/components/binary_sensor/binary_sensor.h"
 #include "esphome/core/preferences.h"
 #include "ak975x.h"
 #include "smoother.h"
