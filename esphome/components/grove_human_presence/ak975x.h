@@ -8,7 +8,7 @@ namespace esphome {
 namespace grove_human_presence {
 
 #define AK975X_DEFAULT_ADDRESS 0x64
-static const char *TAG = "grove_human_presence.sensor";
+static const char *TAG = "grove_human_presence";
 
 // Register addresses
 #define REG_WIA1 0x00
@@ -134,6 +134,8 @@ class AK975X : public i2c::I2CDevice {
   float getIR2(void);
   float getIR3(void);
   float getIR4(void);
+  float getTemperature(void) { return getTMP(); }     // Celsius
+  float getTemperatureF(void) { return getTMP_F(); }  // Fahrenheit
   void startNextSample(void);
   bool initialize(void);
 };

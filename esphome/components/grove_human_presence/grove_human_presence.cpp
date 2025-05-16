@@ -8,7 +8,7 @@ namespace grove_human_presence {
 #define MAX_RETRIES 3
 #define TIMEOUT_MS 1000
 
-void GroveHumanPresenceSensor::setup() {
+void GroveHumanPresenceComponent::setup() {
   sensitivity_presence = 1.0;  // 6.0
   sensitivity_movement = 2.0;  // 10.0
   detect_interval = 30;
@@ -17,24 +17,26 @@ void GroveHumanPresenceSensor::setup() {
 
   if (this->initialize()) {
     ESP_LOGE(TAG, "Failed to initialize Grove Human Presence Sensor.");
+    this->status_set_error();
   }
 }
 
-uint8_t GroveHumanPresenceSensor::getMovement() {
+uint8_t GroveHumanPresenceComponent::getMovement() {
   uint8_t r = m_movement;
   m_movement = MOVEMENT_NONE;
   return r;
 }
 
-void GroveHumanPresenceSensor::loop() {
-  if (!continous_reading) {
+void GroveHumanPresenceComponent::loop() {
+  if (disabled || !continous_reading || this->status_has_error()) {
     return;
   }
 
   uint32_t now = millis();
 
   if (!dataReady()) {
-    this->status_set_error();
+    ESP_LOGW(TAG, "Data not ready");
+    this->status_set_warning();
     return;
   }
 
@@ -46,7 +48,7 @@ void GroveHumanPresenceSensor::loop() {
   }
 }
 
-void GroveHumanPresenceSensor::read_sensors() {
+void GroveHumanPresenceComponent::read_sensors() {
   float ir1 = getIR1(), ir2 = getIR2(), ir3 = getIR3(), ir4 = getIR4();
   float diff13 = ir1 - ir3;
   float diff24 = ir2 - ir4;
@@ -61,7 +63,7 @@ void GroveHumanPresenceSensor::read_sensors() {
   m_smoothers[5].addDataPoint(diff24);
 }
 
-void GroveHumanPresenceSensor::calc_values() {
+void GroveHumanPresenceComponent::calc_values() {
   float d;
 
   for (int i = 0; i < 4; i++) {
@@ -95,52 +97,67 @@ void GroveHumanPresenceSensor::calc_values() {
   }
 }
 
-void GroveHumanPresenceSensor::update() {
+void GroveHumanPresenceComponent::update() {
+  if (disabled || this->status_has_error()) {
+    return;
+  }
+
   if (!continous_reading) {
     if (!dataReady()) {
       ESP_LOGW(TAG, "Data not ready");
-      this->status_set_error();
+      this->status_set_warning();
       return;
     }
 
     read_sensors();
-
     calc_values();
   }
 
-  bool value = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];
+  bool presence = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];
 
   for (int i = 0; i < 4; i++) {
     m_presences[i] = false;
   }
 
-  ESP_LOGD(TAG, "Presence: %d ", value ? 1 : 0);
-  ESP_LOGD(TAG, "Moving: %d ", getMovement());
+  if (presence_sensor != nullptr) {
+    ESP_LOGD(TAG, "Presence: %d ", presence ? 1 : 0);
+    presence_sensor->publish_state(presence);
+  }
 
-  this->publish_state(value ? 1 : 0);
+  if (movement_sensor != nullptr) {
+    uint8_t moving = getMovement();
+    ESP_LOGD(TAG, "Moving: %d ", moving);
+    movement_sensor->publish_state(moving);
+  }
+
+  if (temperature_sensor != nullptr) {
+    float temp = getTemperature();
+    ESP_LOGD(TAG, "Temperature: %.2f", temp);
+    temperature_sensor->publish_state(temp);
+  }
 }
 
-void GroveHumanPresenceSensor::set_sensitivity_presence(float value) {
+void GroveHumanPresenceComponent::set_sensitivity_presence(float value) {
   ESP_LOGD(TAG, "Set sensitivity_presence value: %f", value);
   sensitivity_presence = value;
 }
 
-void GroveHumanPresenceSensor::set_sensitivity_movement(float value) {
+void GroveHumanPresenceComponent::set_sensitivity_movement(float value) {
   ESP_LOGD(TAG, "Set sensitivity_movement value: %f", value);
   sensitivity_movement = value;
 }
 
-void GroveHumanPresenceSensor::set_detect_interval(int value) {
+void GroveHumanPresenceComponent::set_detect_interval(int value) {
   ESP_LOGD(TAG, "Set detect_interval value: %f", value);
   detect_interval = value;
 }
 
-void GroveHumanPresenceSensor::set_continous_reading(bool value) {
-  ESP_LOGD(TAG, "Set detect_interval value: %s", value ? "true" : "false");
+void GroveHumanPresenceComponent::set_continous_reading(bool value) {
+  ESP_LOGD(TAG, "Set continous_reading value: %s", value ? "true" : "false");
   continous_reading = value;
 }
 
-void GroveHumanPresenceSensor::dump_config() {}
+void GroveHumanPresenceComponent::dump_config() {}
 
 }  // namespace grove_human_presence
 }  // namespace esphome

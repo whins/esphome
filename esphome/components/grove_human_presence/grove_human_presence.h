@@ -2,15 +2,16 @@
 
 #include "esphome/core/component.h"
 #include "esphome/components/sensor/sensor.h"
+#include "esphome/components/binary_sensor/binary_sensor.h"
 #include "esphome/components/i2c/i2c.h"
+#include "esphome/core/preferences.h"
 #include "ak975x.h"
 #include "smoother.h"
 
 namespace esphome {
 namespace grove_human_presence {
 
-class GroveHumanPresenceSensor : public sensor::Sensor, public PollingComponent, public AK975X {
- protected:
+class GroveHumanPresenceComponent : public PollingComponent, public AK975X {
  private:
   Smoother m_smoothers[NUM_SMOOTHER] = {Smoother(0.05), Smoother(0.05), Smoother(0.05),
                                         Smoother(0.05), Smoother(0.05), Smoother(0.05)};
@@ -24,21 +25,31 @@ class GroveHumanPresenceSensor : public sensor::Sensor, public PollingComponent,
   float m_ders[4];
   float m_der13, m_der24;
   bool continous_reading = false;
+  bool disabled = false;
 
   /**
-      Read the movement flags, clear after read
-      @return - one/OR of the MOVEMENT_FROM_X_TO_X macro
-  */
+   Read the movement flags, clear after read
+   @return - one/OR of the MOVEMENT_FROM_X_TO_X macro
+   */
   uint8_t getMovement();
 
   void read_sensors();
   void calc_values();
+
+ protected:
+  binary_sensor::BinarySensor *presence_sensor{nullptr};
+  sensor::Sensor *movement_sensor{nullptr};
+  sensor::Sensor *temperature_sensor{nullptr};
 
  public:
   void setup() override;
   void update() override;
   void dump_config() override;
   void loop() override;
+
+  void set_presence_binary_sensor(binary_sensor::BinarySensor *bs) { presence_sensor = bs; }
+  void set_movement_sensor(sensor::Sensor *s) { movement_sensor = s; }
+  void set_temperature_sensor(sensor::Sensor *s) { temperature_sensor = s; }
 
   /**
    * @brief Set Sensitivity Presence
@@ -67,6 +78,15 @@ class GroveHumanPresenceSensor : public sensor::Sensor, public PollingComponent,
    * @param value
    */
   void set_continous_reading(bool value);
+
+  /**
+   * @brief Set the disabled object
+   *
+   * This is used to disable the sensor in the configuration
+   *
+   * @param value
+   */
+  void set_disabled(bool value) { disabled = value; }
 };
 
 }  // namespace grove_human_presence

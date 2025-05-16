@@ -1,14 +1,16 @@
-
 # Grove Human Presence Sensor
 
-```yaml
-# example configuration:
+[Grove - Human Presence Sensor](https://github.com/Seeed-Studio/Grove_Human_Presence_Sensor)
 
+## Using example
+
+```yaml
 sensor:
   - platform: grove_human_presence
     name: Grove Human Presence Sensor
 
+# esp32c3
 i2c:
-  sda: 4
-  scl: 5
+  sda: 8
+  scl: 9
 ```
