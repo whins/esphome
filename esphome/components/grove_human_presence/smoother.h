@@ -3,8 +3,6 @@
 namespace esphome {
 namespace grove_human_presence {
 
-#define NUM_SMOOTHER 6
-
 class Smoother {
  public:
   Smoother(float average_weight) : m_average_weight(average_weight), m_last_marked_value(0), m_average(0) {}

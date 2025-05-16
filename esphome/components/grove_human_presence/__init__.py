@@ -2,53 +2,37 @@ import esphome.codegen as cg
 from esphome.components import i2c
 import esphome.config_validation as cv
 
-from esphome.const import CONF_ID, CONF_DISABLED
+from esphome.const import CONF_ID
 
 DEPENDENCIES = ["i2c"]
-# CODEOWNERS = [""]
 MULTI_CONF = True
 
 CONF_POLLING_INTERVAL = "5s"
 CONF_I2C_ADDR = 0x64
+
+CONF_AK975X_ID = "ak975x_id"
+CONF_OCCUPANCY_SENSITIVITY = "occupancy_sensitivity"
+CONF_MOTION_SENSITIVITY = "motion_sensitivity"
 
 grove_human_presence_ns = cg.esphome_ns.namespace("grove_human_presence")
 GroveHumanPresenceComponent = grove_human_presence_ns.class_(
     "GroveHumanPresenceComponent", cg.PollingComponent, i2c.I2CDevice
 )
 
-CONF_AK975X_ID = "ak975x_id"
-
-CONF_SENSITIVITY_PRESENCE = "sensitivity_presence"
-CONF_SENSITIVITY_MOVEMENT = "sensitivity_movement"
-CONF_DETECT_INTERVAL = "detect_interval"
-CONF_CONTINOUS_READING = "continous_reading"
-
-CONFIG_SCHEMA = cv.Schema(
-    {
-        cv.GenerateID(): cv.declare_id(GroveHumanPresenceComponent),
-        cv.Optional(CONF_SENSITIVITY_PRESENCE, default=1.0): cv.All(
-            cv.float_range(min=1.0, max=5.0),
-        ),
-        cv.Optional(CONF_SENSITIVITY_MOVEMENT, default=2.0): cv.All(
-            cv.float_range(min=1.0, max=15.0),
-        ),
-        cv.Optional(CONF_DETECT_INTERVAL, default=30): cv.All(
-            cv.float_range(min=10, max=500),
-        ),
-        # cv.Optional(CONF_CONTINOUS_READING, default=False): cv.All(
-        #     cv.boolean,
-        # ),
-        # cv.Optional(CONF_DISABLED, default=False): cv.All(
-        #     cv.boolean,
-        # ),
-    }
-)
-
-
-CONFIG_SCHEMA = cv.All(
-    CONFIG_SCHEMA.extend(cv.polling_component_schema(CONF_POLLING_INTERVAL)).extend(
-        i2c.i2c_device_schema(CONF_I2C_ADDR)
+CONFIG_SCHEMA = (
+    cv.Schema(
+        {
+            cv.GenerateID(): cv.declare_id(GroveHumanPresenceComponent),
+            cv.Optional(CONF_OCCUPANCY_SENSITIVITY, default=1.0): cv.All(
+                cv.float_range(min=1.0, max=5.0),
+            ),
+            cv.Optional(CONF_MOTION_SENSITIVITY, default=2.0): cv.All(
+                cv.float_range(min=1.0, max=15.0),
+            ),
+        }
     )
+    .extend(cv.polling_component_schema(CONF_POLLING_INTERVAL))
+    .extend(i2c.i2c_device_schema(CONF_I2C_ADDR))
 )
 
 

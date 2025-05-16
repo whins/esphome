@@ -16,7 +16,6 @@ DEPENDENCIES = ["grove_human_presence"]
 
 from . import CONF_AK975X_ID, GroveHumanPresenceComponent
 
-
 CONFIG_SCHEMA = cv.Schema(
     {
         cv.GenerateID(CONF_AK975X_ID): cv.use_id(GroveHumanPresenceComponent),
@@ -42,8 +41,8 @@ async def to_code(config):
 
     if motion_config := config.get(CONF_MOTION):
         snsr = await sensor.new_sensor(motion_config)
-        cg.add(grove_human_presence_component.set_motion_sensor(snsr))
+        cg.add(grove_human_presence_component.set_motion_sensor_(snsr))
 
     if temperature_config := config.get(CONF_TEMPERATURE):
         snsr = await sensor.new_sensor(temperature_config)
-        cg.add(grove_human_presence_component.set_temperature_sensor(snsr))
+        cg.add(grove_human_presence_component.set_temperature_sensor_(snsr))

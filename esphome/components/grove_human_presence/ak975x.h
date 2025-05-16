@@ -8,7 +8,6 @@ namespace esphome {
 namespace grove_human_presence {
 
 #define AK975X_DEFAULT_ADDRESS 0x64
-static const char *TAG = "grove_human_presence";
 
 // Register addresses
 #define REG_WIA1 0x00
