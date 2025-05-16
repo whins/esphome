@@ -119,9 +119,9 @@ void GroveHumanPresenceComponent::update() {
     m_presences[i] = false;
   }
 
-  if (occupancy_sensor != nullptr) {
+  if (occupancy_binary_sensor != nullptr) {
     ESP_LOGD(TAG, "Presence: %d ", occupancy ? 1 : 0);
-    occupancy_sensor->publish_state(occupancy);
+    occupancy_binary_sensor->publish_state(occupancy);
   }
 
   if (motion_sensor != nullptr) {
