@@ -29,11 +29,11 @@ CONFIG_SCHEMA = (
     cv.Schema(
         {
             cv.GenerateID(): cv.declare_id(GroveHumanPresenceComponent),
-            cv.Optional(CONF_OCCUPANCY): binary_sensor.binary_sensor_schema(
-                icon=ICON_MOTION_SENSOR,
-                device_class=DEVICE_CLASS_OCCUPANCY,
-                state_class=STATE_CLASS_MEASUREMENT,
-            ),
+            # cv.Optional(CONF_OCCUPANCY): binary_sensor.binary_sensor_schema(
+            #     icon=ICON_MOTION_SENSOR,
+            #     device_class=DEVICE_CLASS_OCCUPANCY,
+            #     state_class=STATE_CLASS_MEASUREMENT,
+            # ),
             cv.Optional(CONF_MOTION): sensor.sensor_schema(
                 icon=ICON_MOTION_SENSOR,
                 accuracy_decimals=0,
@@ -50,7 +50,7 @@ CONFIG_SCHEMA = (
         }
     )
     .extend(cv.polling_component_schema(CONF_POLLING_INTERVAL))
-    .extend(i2c.i2c_device_schema(0x08))
+    .extend(i2c.i2c_device_schema(CONF_I2C_ADDR))
 )
 
 
@@ -59,7 +59,7 @@ async def to_code(config):
     await cg.register_component(var, config)
     await i2c.register_i2c_device(var, config)
 
-    for key in [CONF_TEMPERATURE, CONF_OCCUPANCY, CONF_MOTION]:
+    for key in [CONF_TEMPERATURE, CONF_MOTION]:
         if sensor_config := config.get(key):
             sensor_ = await sensor.new_sensor(sensor_config)
             cg.add(getattr(var, f"set_{key}_sensor")(sensor_))
