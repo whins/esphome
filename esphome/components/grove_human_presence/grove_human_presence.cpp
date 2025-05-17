@@ -7,8 +7,8 @@ namespace grove_human_presence {
 void GroveHumanPresenceComponent::setup() {
   occupancy_sensitivity = 3.0;  // 6.0
   motion_sensitivity = 6.0;
-  read_data_failure_count = 0;  // 10.0
   m_movement = MOVEMENT_NONE;
+  last_read_time = millis();
 
   if (this->initialize()) {
     ESP_LOGE(TAG, "Failed to initialize Grove Human Presence Sensor.");
@@ -22,26 +22,7 @@ uint8_t GroveHumanPresenceComponent::getMovement() {
   return r;
 }
 
-void GroveHumanPresenceComponent::loop() {}
-
-void GroveHumanPresenceComponent::update() {
-  if (!dataReady()) {
-    ESP_LOGW(TAG, "Data not ready");
-    read_data_failure_count++;
-    if (read_data_failure_count > 10) {
-      ESP_LOGE(TAG, "Failed to read data from Grove Human Presence Sensor.");
-      this->status_set_error();
-      read_data_failure_count = 0;
-    }
-    this->status_set_warning();
-    return;
-  }
-
-  this->status_clear_error();
-  this->status_clear_warning();
-
-  read_data_failure_count = 0;
-
+void GroveHumanPresenceComponent::read_sensors() {
   float ir1 = getIR1(), ir2 = getIR2(), ir3 = getIR3(), ir4 = getIR4();
   float diff13 = ir1 - ir3;
   float diff24 = ir2 - ir4;
@@ -54,7 +35,9 @@ void GroveHumanPresenceComponent::update() {
   m_smoothers[3].addDataPoint(ir4);
   m_smoothers[4].addDataPoint(diff13);
   m_smoothers[5].addDataPoint(diff24);
+}
 
+void GroveHumanPresenceComponent::calc_values() {
   float d;
 
   for (int i = 0; i < 4; i++) {
@@ -86,6 +69,27 @@ void GroveHumanPresenceComponent::update() {
     m_movement &= 0b11110011;
     m_movement |= MOVEMENT_FROM_2_TO_4;
   }
+}
+
+void GroveHumanPresenceComponent::loop() {
+  uint32_t now = millis();
+  if (now - last_read_time < 30) {
+    return;
+  }
+
+  if (!dataReady()) {
+    ESP_LOGW(TAG, "Data not ready");
+    this->status_set_warning();
+    return;
+  }
+
+  read_sensors();
+
+  last_read_time = now;
+}
+
+void GroveHumanPresenceComponent::update() {
+  calc_values();
 
 #ifdef USE_BINARY_SENSOR
   bool occupancy = m_presences[0] || m_presences[1] || m_presences[2] || m_presences[3];

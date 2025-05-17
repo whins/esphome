@@ -43,13 +43,16 @@ class GroveHumanPresenceComponent : public PollingComponent, public AK975X {
   float m_ders[4];
   float m_der13, m_der24;
 
-  uint8_t read_data_failure_count = 0;
+  uint32_t last_read_time = 0;
 
   /**
    Read the movement flags, clear after read
    @return - one/OR of the MOVEMENT_FROM_X_TO_X macro
    */
   uint8_t getMovement();
+
+  void read_sensors();
+  void calc_values();
 
  public:
   void setup() override;
