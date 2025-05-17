@@ -11,10 +11,10 @@ void GroveHumanPresenceComponent::setup() {
   read_data_failure_count = 0; // 10.0
   m_movement = MOVEMENT_NONE;
 
-  if (this->initialize()) {
-    ESP_LOGE(TAG, "Failed to initialize Grove Human Presence Sensor.");
-    this->status_set_error();
-  }
+  // if (this->initialize()) {
+  //   ESP_LOGE(TAG, "Failed to initialize Grove Human Presence Sensor.");
+  //   this->status_set_error();
+  // }
 }
 
 uint8_t GroveHumanPresenceComponent::getMovement() {
