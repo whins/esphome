@@ -37,11 +37,13 @@ class GroveHumanPresenceComponent : public PollingComponent, public AK975X {
   bool m_presences[4] = {false, false, false, false};
   uint8_t m_movement;
 
-  float occupancy_sensitivity = 6.0;
-  float motion_sensitivity = 10.0;
+  float occupancy_sensitivity;
+  float motion_sensitivity;
 
   float m_ders[4];
   float m_der13, m_der24;
+
+  uint8_t read_data_failure_count = 0;
 
   /**
    Read the movement flags, clear after read

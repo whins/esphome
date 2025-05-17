@@ -1,12 +1,14 @@
 
 #include "grove_human_presence.h"
+#include "esphome/core/application.h"
 
 namespace esphome {
 namespace grove_human_presence {
 
 void GroveHumanPresenceComponent::setup() {
-  occupancy_sensitivity = 1.0;  // 6.0
-  motion_sensitivity = 2.0;     // 10.0
+  occupancy_sensitivity = 3.0;  // 6.0
+  motion_sensitivity = 6.0;    
+  read_data_failure_count = 0; // 10.0
   m_movement = MOVEMENT_NONE;
 
   if (this->initialize()) {
@@ -24,9 +26,17 @@ uint8_t GroveHumanPresenceComponent::getMovement() {
 void GroveHumanPresenceComponent::update() {
   if (!dataReady()) {
     ESP_LOGW(TAG, "Data not ready");
+    read_data_failure_count++;
+    if (read_data_failure_count > 10) {
+      ESP_LOGE(TAG, "Failed to read data from Grove Human Presence Sensor.");
+      this->status_set_error();
+      App.safe_reboot();
+    }
     this->status_set_warning();
     return;
   }
+
+  read_data_failure_count = 0;
 
   float ir1 = getIR1(), ir2 = getIR2(), ir3 = getIR3(), ir4 = getIR4();
   float diff13 = ir1 - ir3;
