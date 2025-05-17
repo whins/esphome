@@ -1,20 +1,19 @@
 
 #include "grove_human_presence.h"
-#include "esphome/core/application.h"
 
 namespace esphome {
 namespace grove_human_presence {
 
 void GroveHumanPresenceComponent::setup() {
   occupancy_sensitivity = 3.0;  // 6.0
-  motion_sensitivity = 6.0;    
-  read_data_failure_count = 0; // 10.0
+  motion_sensitivity = 6.0;
+  read_data_failure_count = 0;  // 10.0
   m_movement = MOVEMENT_NONE;
 
-  // if (this->initialize()) {
-  //   ESP_LOGE(TAG, "Failed to initialize Grove Human Presence Sensor.");
-  //   this->status_set_error();
-  // }
+  if (this->initialize()) {
+    ESP_LOGE(TAG, "Failed to initialize Grove Human Presence Sensor.");
+    this->status_set_error();
+  }
 }
 
 uint8_t GroveHumanPresenceComponent::getMovement() {
@@ -23,6 +22,8 @@ uint8_t GroveHumanPresenceComponent::getMovement() {
   return r;
 }
 
+void GroveHumanPresenceComponent::loop() {}
+
 void GroveHumanPresenceComponent::update() {
   if (!dataReady()) {
     ESP_LOGW(TAG, "Data not ready");
@@ -30,11 +31,14 @@ void GroveHumanPresenceComponent::update() {
     if (read_data_failure_count > 10) {
       ESP_LOGE(TAG, "Failed to read data from Grove Human Presence Sensor.");
       this->status_set_error();
-      App.safe_reboot();
+      read_data_failure_count = 0;
     }
     this->status_set_warning();
     return;
   }
+
+  this->status_clear_error();
+  this->status_clear_warning();
 
   read_data_failure_count = 0;
 
