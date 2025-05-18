@@ -114,9 +114,9 @@ void GroveHumanPresenceComponent::update() {
   }
 #endif
 
-  for (int i = 0; i < 4; i++) {
-    m_presences[i] = false;
-  }
+  // for (int i = 0; i < 4; i++) {
+  //   m_presences[i] = false;
+  // }
 }
 
 void GroveHumanPresenceComponent::set_occupancy_sensitivity(float value) {
