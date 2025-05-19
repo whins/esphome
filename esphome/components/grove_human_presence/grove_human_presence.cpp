@@ -29,12 +29,12 @@ void GroveHumanPresenceComponent::read_sensors() {
 
   startNextSample();
 
-  m_smoothers[0].addDataPoint(ir1);
-  m_smoothers[1].addDataPoint(ir2);
-  m_smoothers[2].addDataPoint(ir3);
-  m_smoothers[3].addDataPoint(ir4);
-  m_smoothers[4].addDataPoint(diff13);
-  m_smoothers[5].addDataPoint(diff24);
+  m_smoothers[0].addValue(ir1);
+  m_smoothers[1].addValue(ir2);
+  m_smoothers[2].addValue(ir3);
+  m_smoothers[3].addValue(ir4);
+  m_smoothers[4].addValue(diff13);
+  m_smoothers[5].addValue(diff24);
 }
 
 void GroveHumanPresenceComponent::calc_values() {
